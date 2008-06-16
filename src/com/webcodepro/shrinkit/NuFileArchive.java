@@ -1,0 +1,37 @@
+package com.webcodepro.shrinkit;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Basic reading of a NuFX archive.
+ * 
+ * @author robgreene@users.sourceforge.net
+ */
+public class NuFileArchive {
+	private MasterHeaderBlock master;
+	private List<HeaderBlock> headers;
+	
+	/**
+	 * Read in the NuFile/NuFX/Shrinkit archive.
+	 */
+	public NuFileArchive(InputStream inputStream) throws IOException {
+		ByteSource bs = new ByteSource(inputStream);
+		master = new MasterHeaderBlock(bs);
+		headers = new ArrayList<HeaderBlock>();
+		for (int i=0; i<master.getTotalRecords(); i++) {
+			HeaderBlock header = new HeaderBlock(bs);
+			header.readThreads(bs);
+			headers.add(header);
+		}
+	}
+
+	public MasterHeaderBlock getMasterHeaderBlock() {
+		return master;
+	}
+	public List<HeaderBlock> getHeaderBlocks() {
+		return headers;
+	}
+}
