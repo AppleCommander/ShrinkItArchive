@@ -2,7 +2,6 @@ package com.webcodepro.shrinkit;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -42,7 +41,9 @@ public class TimeRec {
 		if (bytes == null || bytes.length - offset < LENGTH) {
 			throw new IllegalArgumentException("TimeRec requires a " + LENGTH + " byte array.");
 		}
-		data = Arrays.copyOfRange(bytes, offset, LENGTH);
+		//data = Arrays.copyOfRange(bytes, offset, LENGTH);
+		data = new byte[LENGTH];
+		System.arraycopy(bytes, offset, data, 0, LENGTH);
 	}
 	/**
 	 * Construct a TimeRec from the InputStream.
