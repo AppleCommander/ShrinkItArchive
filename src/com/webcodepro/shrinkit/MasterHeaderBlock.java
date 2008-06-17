@@ -17,6 +17,7 @@ import java.util.Date;
 public class MasterHeaderBlock {
 	private static final int MASTER_HEADER_LENGTH = 48;
 	private int masterCrc;
+	private boolean validCrc;
 	private long totalRecords;
 	private Date archiveCreateWhen;
 	private Date archiveModWhen;
@@ -25,15 +26,11 @@ public class MasterHeaderBlock {
 	
 	/**
 	 * Create the Master Header Block, based on the ByteSource.
-	 * To avoid byte counting, we read in the fixed size header
-	 * and then work our way through the data.  When we are done, 
-	 * that data is thrown away, and we don't need to ensure 
-	 * that we've read a consistent number of bytes. 
 	 */
 	public MasterHeaderBlock(ByteSource bs) throws IOException {
-		bs = new ByteSource(bs.readBytes(MASTER_HEADER_LENGTH));
 		bs.checkNuFileId();
 		masterCrc = bs.readWord();
+		bs.resetCrc();	// CRC is computed from this point to the end of the header
 		totalRecords = bs.readLong();
 		archiveCreateWhen = bs.readDate();
 		archiveModWhen = bs.readDate();
@@ -44,6 +41,11 @@ public class MasterHeaderBlock {
 		} else {
 			masterEof = -1;
 		}
+		// Read whatever remains of the fixed size header
+		while (bs.getTotalBytesRead() < MASTER_HEADER_LENGTH) {
+			bs.readByte();
+		}
+		validCrc = (masterCrc == bs.getCrcValue());
 	}
 	
 	// GENERATED CODE
@@ -83,5 +85,8 @@ public class MasterHeaderBlock {
 	}
 	public void setMasterEof(long masterEof) {
 		this.masterEof = masterEof;
+	}
+	public boolean isValidCrc() {
+		return validCrc;
 	}
 }

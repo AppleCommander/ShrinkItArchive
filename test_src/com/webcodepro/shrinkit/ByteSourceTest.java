@@ -17,6 +17,7 @@ public class ByteSourceTest extends TestCase {
 		ByteSource bs = new ByteSource("a".getBytes());
 		assertEquals('a', bs.read());
 		assertEquals(-1, bs.read());
+		assertEquals(1, bs.getTotalBytesRead());
 	}
 	public void testReadB() throws IOException {
 		// Just to ensure we can get more than one byte...
@@ -27,6 +28,7 @@ public class ByteSourceTest extends TestCase {
 		assertEquals('l', bs.read());
 		assertEquals('o', bs.read());
 		assertEquals(-1, bs.read());
+		assertEquals(5, bs.getTotalBytesRead());
 	}
 	public void testReadBytesInt() throws IOException {
 		// Ensure we read the requested data.
@@ -34,6 +36,7 @@ public class ByteSourceTest extends TestCase {
 		assertEquals("Hello", new String(bs.readBytes(5)));
 		assertEquals("World", new String(bs.readBytes(5)));
 		assertEquals(-1, bs.read());
+		assertEquals(10, bs.getTotalBytesRead());
 	}
 	public void textReadBytesIntError() {
 		// Ensure that we fail appropriately
@@ -43,17 +46,20 @@ public class ByteSourceTest extends TestCase {
 			fail();
 		} catch (IOException ex) {
 			assertTrue(true);	// Expected
+			assertEquals(2, bs.getTotalBytesRead());
 		}
 	}
 	public void testCheckNuFileId() throws IOException {
 		ByteSource bs = new ByteSource(new byte[] { 0x4e, (byte)0xf5, 0x46, (byte)0xe9, 0x6c, (byte)0xe5 });
 		assertTrue(bs.checkNuFileId());
+		assertEquals(6, bs.getTotalBytesRead());
 		bs = new ByteSource("NotNuFile".getBytes());
 		assertFalse(bs.checkNuFileId());
 	}
 	public void testCheckNuFxId() throws IOException {
 		ByteSource bs = new ByteSource(new byte[] { 0x4e, (byte)0xf5, 0x46, (byte)0xd8 });
 		assertTrue(bs.checkNuFxId());
+		assertEquals(4, bs.getTotalBytesRead());
 		bs = new ByteSource("NotNuFx".getBytes());
 		assertFalse(bs.checkNuFxId());
 	}
@@ -61,18 +67,22 @@ public class ByteSourceTest extends TestCase {
 		ByteSource bs = new ByteSource(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 });
 		assertEquals(0x0201, bs.readWord());
 		assertEquals(0x0403, bs.readWord());
+		assertEquals(4, bs.getTotalBytesRead());
 	}
 	public void testReadWordHighBitSet() throws IOException {
 		ByteSource bs = new ByteSource(new byte[] { (byte)0xff, (byte)0xff });
 		assertEquals(0xffff, bs.readWord());
+		assertEquals(2, bs.getTotalBytesRead());
 	}
 	public void testReadLong() throws IOException {
 		ByteSource bs = new ByteSource(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 });
 		assertEquals(0x04030201, bs.readLong());
+		assertEquals(4, bs.getTotalBytesRead());
 	}
 	public void testReadLongHighBitSet() throws IOException {
 		ByteSource bs = new ByteSource(new byte[] { (byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff });
 		assertEquals(0xffffffffL, bs.readLong());
+		assertEquals(4, bs.getTotalBytesRead());
 	}
 	public void testReadDate() throws IOException {
 		ByteSource bs = new ByteSource(new byte[] { 
@@ -84,11 +94,13 @@ public class ByteSourceTest extends TestCase {
 		assertEquals(new GregorianCalendar(1988, Calendar.OCTOBER, 22, 1, 10, 0).getTime(), bs.readDate());
 		assertEquals(new GregorianCalendar(1988, Calendar.NOVEMBER, 17, 11, 16, 0).getTime(), bs.readDate());
 		assertEquals(new GregorianCalendar(1988, Calendar.OCTOBER, 22, 13, 12, 0).getTime(), bs.readDate());
+		assertEquals(24, bs.getTotalBytesRead());
 	}
 	public void testReadNullDate() throws IOException {
 		ByteSource bs = new ByteSource(new byte[] {
 				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00	// null date
 			});
 		assertNull(bs.readDate());
+		assertEquals(8, bs.getTotalBytesRead());
 	}
 }

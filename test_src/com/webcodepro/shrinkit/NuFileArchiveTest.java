@@ -33,9 +33,9 @@ public class NuFileArchiveTest extends TestCase {
 		MasterHeaderBlock m = a.getMasterHeaderBlock();
 		System.out.printf("Master Header Block\n==================\n"
 				+ "master_crc=$%x\ntotal_records=%d\narchive_create_when=%tc\narchive_mod_when=%tc\n"
-				+ "master_version=%d\nmaster_eof=$%x\n\n",
+				+ "master_version=%d\nmaster_eof=$%x\nisValidCrc = %b\n\n",
 			m.getMasterCrc(), m.getTotalRecords(), m.getArchiveCreateWhen(), m.getArchiveModWhen(), 
-			m.getMasterVersion(), m.getMasterEof());
+			m.getMasterVersion(), m.getMasterEof(), m.isValidCrc());
 		for (HeaderBlock b : a.getHeaderBlocks()) {
 			System.out.printf("\tHeader Block\n\t============\n");
 			System.out.printf("\theader_crc=$%x\n\tattrib_count=%d\n\tversion_number=%d\n\ttotal_threads=%d\n\t"

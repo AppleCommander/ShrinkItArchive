@@ -13,6 +13,8 @@ import java.util.GregorianCalendar;
  */
 public class ByteSource implements ByteConstants {
 	private InputStream inputStream;
+	private long bytesRead = 0;
+	private CRC16 crc = new CRC16();
 
 	/**
 	 * Construct a ByteSource from an InputStream.
@@ -33,7 +35,12 @@ public class ByteSource implements ByteConstants {
 	 * Note that an unsigned byte needs to be returned in a larger container (ie, a short or int or long).
 	 */
 	public int read() throws IOException {
-		return inputStream.read();
+		int b = inputStream.read();
+		if (b != -1) {
+			crc.update(b);
+			bytesRead++;
+		}
+		return b;
 	}
 	/**
 	 * Get the next byte and fail if we are at EOF.
@@ -51,9 +58,11 @@ public class ByteSource implements ByteConstants {
 	public byte[] readBytes(int bytes) throws IOException {
 		byte[] data = new byte[bytes];
 		int read = inputStream.read(data);
+		bytesRead+= read;
 		if (read < bytes) {
 			throw new IOException("Requested " + bytes + " bytes, but " + read + " read");
 		}
+		crc.update(data);
 		return data;
 	}
 
@@ -101,5 +110,25 @@ public class ByteSource implements ByteConstants {
 		GregorianCalendar gc = new GregorianCalendar(year, data[TIMEREC_MONTH]-1, data[TIMEREC_DAY], 
 				data[TIMEREC_HOUR], data[TIMEREC_MINUTE], data[TIMEREC_SECOND]);
 		return gc.getTime();
+	}
+	
+	/**
+	 * Reset the CRC-16 to $0000.
+	 */
+	public void resetCrc() {
+		crc.reset();
+	}
+	/**
+	 * Get the current CRC-16 value.
+	 */
+	public long getCrcValue() {
+		return crc.getValue();
+	}
+	
+	/**
+	 * Answer with the total number of bytes read.
+	 */
+	public long getTotalBytesRead() {
+		return bytesRead;
 	}
 }
