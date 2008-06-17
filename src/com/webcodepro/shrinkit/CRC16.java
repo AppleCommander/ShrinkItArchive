@@ -40,7 +40,7 @@ public class CRC16 implements Checksum {
 	 */
 	private int update(int crc, byte[] bytes, int off, int len) {
 		for (int i = off; i < (off + len); i++) {
-			byte b = bytes[i];
+			int b = (bytes[i] & 0xff);
 			crc = (table[((crc >> 8) & 0xff) ^ b] ^ (crc << 8)) & 0xffff;
 		}
 		return crc;
@@ -64,7 +64,7 @@ public class CRC16 implements Checksum {
 	 * @param b input byte
 	 */
 	public void update(int b) {
-		byte[] ba = { (byte) b };
+		byte[] ba = { (byte) (b & 0xff) };
 		value = update(value, ba, 0, 1);
 	}
 

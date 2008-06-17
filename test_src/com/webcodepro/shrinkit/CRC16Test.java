@@ -5,7 +5,6 @@ import java.io.UnsupportedEncodingException;
 import junit.framework.TestCase;
 
 public class CRC16Test extends TestCase {
-
 	public void testTable() {
 		int[] table = CRC16.getTable();
 		assertEquals(0, table[0]);
@@ -30,4 +29,10 @@ public class CRC16Test extends TestCase {
 		assertEquals(0x31c3, crc16.getValue());
 	}
 
+	public void testVariousValues() throws UnsupportedEncodingException {
+		CRC16 crc16 = new CRC16();
+		byte[] data = new byte[] { 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, (byte)0x80 };
+		crc16.update(data);
+		assertEquals(0x2299, crc16.getValue());
+	}
 }
