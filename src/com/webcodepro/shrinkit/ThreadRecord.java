@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.webcodepro.shrinkit.io.LittleEndianByteInputStream;
+
 /**
  * This represents a single thread from the Shrinkit archive.
  * As it is constructed, the thread "header" is read.  Once all
@@ -29,7 +31,7 @@ public class ThreadRecord {
 	/**
 	 * Construct the ThreadRecord and read the header details.
 	 */
-	public ThreadRecord(ByteSource bs) throws IOException {
+	public ThreadRecord(LittleEndianByteInputStream bs) throws IOException {
 		threadClass = ThreadClass.find(bs.readWord());
 		threadFormat = ThreadFormat.find(bs.readWord());
 		threadKind = ThreadKind.find(bs.readWord(), threadClass);
@@ -41,7 +43,7 @@ public class ThreadRecord {
 	/**
 	 * Read the raw thread data.  This must be called.
 	 */
-	public void readThreadData(ByteSource bs) throws IOException {
+	public void readThreadData(LittleEndianByteInputStream bs) throws IOException {
 		threadData = bs.readBytes((int)compThreadEof);
 	}
 	/**

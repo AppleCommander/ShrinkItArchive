@@ -1,4 +1,4 @@
-package com.webcodepro.shrinkit;
+package com.webcodepro.shrinkit.io;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -7,25 +7,27 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import com.webcodepro.shrinkit.CRC16;
+
 /**
  * A simple class to hide the source of byte data.
  * @author robgreene@users.sourceforge.net
  */
-public class ByteSource implements ByteConstants {
+public class LittleEndianByteInputStream extends InputStream implements ByteConstants {
 	private InputStream inputStream;
 	private long bytesRead = 0;
 	private CRC16 crc = new CRC16();
 
 	/**
-	 * Construct a ByteSource from an InputStream.
+	 * Construct a LittleEndianByteInputStream from an InputStream.
 	 */
-	public ByteSource(InputStream inputStream) {
+	public LittleEndianByteInputStream(InputStream inputStream) {
 		this.inputStream = inputStream;
 	}
 	/**
-	 * Construct a ByteSource from a byte array.
+	 * Construct a LittleEndianByteInputStream from a byte array.
 	 */
-	public ByteSource(byte[] data) {
+	public LittleEndianByteInputStream(byte[] data) {
 		this.inputStream = new ByteArrayInputStream(data);
 	}
 
@@ -67,14 +69,14 @@ public class ByteSource implements ByteConstants {
 	}
 
 	/**
-	 * Test that the NuFile id is embedded in the ByteSource.
+	 * Test that the NuFile id is embedded in the LittleEndianByteInputStream.
 	 */
 	public boolean checkNuFileId() throws IOException {
 		byte[] data = readBytes(6);
 		return Arrays.equals(data, NUFILE_ID);
 	}
 	/**
-	 * Test that the NuFx id is embedded in the ByteSource.
+	 * Test that the NuFx id is embedded in the LittleEndianByteInputStream.
 	 */
 	public boolean checkNuFxId() throws IOException {
 		byte[] data = readBytes(4);

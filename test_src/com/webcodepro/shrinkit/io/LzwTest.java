@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import junit.framework.TestCase;
 
-import com.webcodepro.shrinkit.ByteSource;
 
 /**
  * Exercise the LZW encoder and decoders.
@@ -27,7 +26,7 @@ public class LzwTest extends TestCase {
 	}
 
 	public void testLzwDecoder2() throws IOException {
-		RleInputStream is = new RleInputStream(new ByteSource(new LzwInputStream(new BitInputStream(new ByteArrayInputStream(getHgrColorsLzw1()), 9))));
+		RleInputStream is = new RleInputStream(new LittleEndianByteInputStream(new LzwInputStream(new BitInputStream(new ByteArrayInputStream(getHgrColorsLzw1()), 9))));
 		
 		int bytes = 0;
 		int b;

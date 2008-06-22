@@ -2,6 +2,8 @@ package com.webcodepro.shrinkit;
 
 import java.io.IOException;
 
+import com.webcodepro.shrinkit.io.LittleEndianByteInputStream;
+
 import junit.framework.TestCase;
 
 /**
@@ -19,7 +21,7 @@ public class ThreadRecordTest extends TestCase {
 				0x02, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 
 				0x00, 0x20, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00
 			};
-		ByteSource bs = new ByteSource(data);
+		LittleEndianByteInputStream bs = new LittleEndianByteInputStream(data);
 		ThreadRecord r = new ThreadRecord(bs);
 		assertEquals(ThreadClass.DATA, r.getThreadClass());
 		assertEquals(ThreadFormat.DYNAMIC_LZW1, r.getThreadFormat());
@@ -39,7 +41,7 @@ public class ThreadRecordTest extends TestCase {
 				0x02, 0x00, 0x02, 0x00, 0x02, 0x00, 0x00, 0x00, 
 				0x00, 0x10, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00
 			};
-		ByteSource bs = new ByteSource(data);
+		LittleEndianByteInputStream bs = new LittleEndianByteInputStream(data);
 		ThreadRecord r1 = new ThreadRecord(bs);
 		assertEquals(ThreadClass.DATA, r1.getThreadClass());
 		assertEquals(ThreadFormat.DYNAMIC_LZW1, r1.getThreadFormat());
@@ -64,7 +66,7 @@ public class ThreadRecordTest extends TestCase {
 				0x02, 0x00, 0x02, 0x00, 0x01, 0x00, 0x00, 0x00, 
 				0x00, 0x00, 0x00, 0x00, 0x51, 0x45, 0x07, 0x00
 			};
-		ByteSource bs = new ByteSource(data);
+		LittleEndianByteInputStream bs = new LittleEndianByteInputStream(data);
 		ThreadRecord r = new ThreadRecord(bs);
 		assertEquals(ThreadClass.DATA, r.getThreadClass());
 		assertEquals(ThreadFormat.DYNAMIC_LZW1, r.getThreadFormat());
@@ -86,7 +88,7 @@ public class ThreadRecordTest extends TestCase {
 				0x02, 0x00, 0x03, 0x00, 0x00, 0x00, 0x58, 0x4a, 
 				(byte)0xd6, 0x06, 0x00, 0x00, (byte)0xd4, 0x03, 0x00, 0x00
 			};
-		ByteSource bs = new ByteSource(data);
+		LittleEndianByteInputStream bs = new LittleEndianByteInputStream(data);
 		ThreadRecord r1 = new ThreadRecord(bs);
 		assertEquals(ThreadClass.FILENAME, r1.getThreadClass());
 		assertEquals(ThreadFormat.UNCOMPRESSED, r1.getThreadFormat());
@@ -122,7 +124,7 @@ public class ThreadRecordTest extends TestCase {
 				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 			};
-		ByteSource bs = new ByteSource(data);
+		LittleEndianByteInputStream bs = new LittleEndianByteInputStream(data);
 		ThreadRecord r = new ThreadRecord(bs);
 		r.readThreadData(bs);
 		assertTrue(r.isText());

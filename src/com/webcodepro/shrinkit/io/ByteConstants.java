@@ -1,10 +1,11 @@
-package com.webcodepro.shrinkit;
+package com.webcodepro.shrinkit.io;
+
 
 /**
- * Provides constants for the ByteSource and ByteTarget classes.
+ * Provides constants for the LittleEndianByteInputStream and ByteTarget classes.
  * 
  * @author robgreene@users.sourceforge.net
- * @see ByteSource
+ * @see LittleEndianByteInputStream
  * @see ByteTarget
  */
 public interface ByteConstants {

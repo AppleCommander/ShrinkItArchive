@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.webcodepro.shrinkit.io.LittleEndianByteInputStream;
+
 /**
  * The Header Block contains information and content
  * about a single entry (be it a file or disk image).
@@ -40,7 +42,7 @@ public class HeaderBlock {
 	 * Create the Header Block.  This is done dynamically since
 	 * the Header Block size varies significantly.
 	 */
-	public HeaderBlock(ByteSource bs) throws IOException {
+	public HeaderBlock(LittleEndianByteInputStream bs) throws IOException {
 		bs.checkNuFxId();
 		headerCrc = bs.readWord();
 		attribCount = bs.readWord();
@@ -81,7 +83,7 @@ public class HeaderBlock {
 	 * Read in all data threads.  All ThreadRecords are read and then
 	 * each thread's data is read (per NuFX spec).
 	 */
-	public void readThreads(ByteSource bs) throws IOException {
+	public void readThreads(LittleEndianByteInputStream bs) throws IOException {
 		threads = new ArrayList<ThreadRecord>();
 		for (long l=0; l<totalThreads; l++) threads.add(new ThreadRecord(bs));
 		for (ThreadRecord r : threads) r.readThreadData(bs);

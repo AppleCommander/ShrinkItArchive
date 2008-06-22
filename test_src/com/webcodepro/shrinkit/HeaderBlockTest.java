@@ -2,6 +2,8 @@ package com.webcodepro.shrinkit;
 
 import java.io.IOException;
 
+import com.webcodepro.shrinkit.io.LittleEndianByteInputStream;
+
 import junit.framework.TestCase;
 
 /**
@@ -25,7 +27,7 @@ public class HeaderBlockTest extends TestCase {
 				0x00, 0x0c, 0x01, 0x58, 0x16, 0x0a, 0x00, 0x07,
 				0x05, 0x00, 0x53, 0x54, 0x55, 0x46, 0x46
 			};
-		ByteSource bs = new ByteSource(data);
+		LittleEndianByteInputStream bs = new LittleEndianByteInputStream(data);
 		HeaderBlock b = new HeaderBlock(bs);
 		assertEquals(0x3455, b.getHeaderCrc());
 		assertEquals(0x003a, b.getAttribCount());
@@ -37,9 +39,9 @@ public class HeaderBlockTest extends TestCase {
 		assertEquals(0x00000004, b.getFileType());
 		assertEquals(0x00000000, b.getExtraType());
 		assertEquals(0x0001, b.getStorageType());
-		assertEquals(new ByteSource(new byte[] {0x00,0x0a,0x01,0x58,0x16,0x0a,0x00,0x07}).readDate(), b.getCreateWhen());
-		assertEquals(new ByteSource(new byte[] {0x00,0x10,0x0b,0x58,0x11,0x0b,0x00,0x05}).readDate(), b.getModWhen());
-		assertEquals(new ByteSource(new byte[] {0x00,0x0c,0x01,0x58,0x16,0x0a,0x00,0x07}).readDate(), b.getArchiveWhen());
+		assertEquals(new LittleEndianByteInputStream(new byte[] {0x00,0x0a,0x01,0x58,0x16,0x0a,0x00,0x07}).readDate(), b.getCreateWhen());
+		assertEquals(new LittleEndianByteInputStream(new byte[] {0x00,0x10,0x0b,0x58,0x11,0x0b,0x00,0x05}).readDate(), b.getModWhen());
+		assertEquals(new LittleEndianByteInputStream(new byte[] {0x00,0x0c,0x01,0x58,0x16,0x0a,0x00,0x07}).readDate(), b.getArchiveWhen());
 		assertEquals("STUFF", b.getFilename());
 	}
 	
@@ -58,7 +60,7 @@ public class HeaderBlockTest extends TestCase {
 				0x09, 0x00, 0x45, 0x58, 0x54, 0x2e, 0x53, 0x54,
 				0x55, 0x46, 0x46
 			};
-		ByteSource bs = new ByteSource(data);
+		LittleEndianByteInputStream bs = new LittleEndianByteInputStream(data);
 		HeaderBlock b = new HeaderBlock(bs);
 		assertEquals(0x7865, b.getHeaderCrc());
 		assertEquals(0x003a, b.getAttribCount());
@@ -70,9 +72,9 @@ public class HeaderBlockTest extends TestCase {
 		assertEquals(0x000000b3, b.getFileType());
 		assertEquals(0x00000000, b.getExtraType());
 		assertEquals(0x0005, b.getStorageType());
-		assertEquals(new ByteSource(new byte[] {0x00,0x0a,0x01,0x58,0x16,0x0a,0x00,0x07}).readDate(), b.getCreateWhen());
-		assertEquals(new ByteSource(new byte[] {0x00,0x10,0x0b,0x58,0x11,0x0b,0x00,0x05}).readDate(), b.getModWhen());
-		assertEquals(new ByteSource(new byte[] {0x00,0x0c,0x01,0x58,0x16,0x0a,0x00,0x07}).readDate(), b.getArchiveWhen());
+		assertEquals(new LittleEndianByteInputStream(new byte[] {0x00,0x0a,0x01,0x58,0x16,0x0a,0x00,0x07}).readDate(), b.getCreateWhen());
+		assertEquals(new LittleEndianByteInputStream(new byte[] {0x00,0x10,0x0b,0x58,0x11,0x0b,0x00,0x05}).readDate(), b.getModWhen());
+		assertEquals(new LittleEndianByteInputStream(new byte[] {0x00,0x0c,0x01,0x58,0x16,0x0a,0x00,0x07}).readDate(), b.getArchiveWhen());
 		assertEquals("EXT.STUFF", b.getFilename());
 	}
 
@@ -90,7 +92,7 @@ public class HeaderBlockTest extends TestCase {
 				0x00, 0x0c, 0x01, 0x58, 0x16, 0x0a, 0x00, 0x07,
 				0x04, 0x00, 0x44, 0x49, 0x53, 0x4b
 			};
-		ByteSource bs = new ByteSource(data);
+		LittleEndianByteInputStream bs = new LittleEndianByteInputStream(data);
 		HeaderBlock b = new HeaderBlock(bs);
 		assertEquals(0x0567, b.getHeaderCrc());
 		assertEquals(0x003a, b.getAttribCount());
@@ -102,9 +104,9 @@ public class HeaderBlockTest extends TestCase {
 		assertEquals(0x00000000, b.getFileType());
 		assertEquals(0x00000640, b.getExtraType());
 		assertEquals(0x0200, b.getStorageType());
-		assertEquals(new ByteSource(new byte[] {0x00,0x0a,0x01,0x58,0x16,0x0a,0x00,0x07}).readDate(), b.getCreateWhen());
-		assertEquals(new ByteSource(new byte[] {0x00,0x10,0x0b,0x58,0x11,0x0b,0x00,0x05}).readDate(), b.getModWhen());
-		assertEquals(new ByteSource(new byte[] {0x00,0x0c,0x01,0x58,0x16,0x0a,0x00,0x07}).readDate(), b.getArchiveWhen());
+		assertEquals(new LittleEndianByteInputStream(new byte[] {0x00,0x0a,0x01,0x58,0x16,0x0a,0x00,0x07}).readDate(), b.getCreateWhen());
+		assertEquals(new LittleEndianByteInputStream(new byte[] {0x00,0x10,0x0b,0x58,0x11,0x0b,0x00,0x05}).readDate(), b.getModWhen());
+		assertEquals(new LittleEndianByteInputStream(new byte[] {0x00,0x0c,0x01,0x58,0x16,0x0a,0x00,0x07}).readDate(), b.getArchiveWhen());
 		assertEquals("DISK", b.getFilename());
 	}
 	
@@ -123,7 +125,7 @@ public class HeaderBlockTest extends TestCase {
 				0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00,
 				0x00, 0x00, 0x00, 0x00
 			};
-		ByteSource bs = new ByteSource(data);
+		LittleEndianByteInputStream bs = new LittleEndianByteInputStream(data);
 		HeaderBlock b = new HeaderBlock(bs);
 		assertEquals(0x405e, b.getHeaderCrc());
 		assertEquals(0x003c, b.getAttribCount());
@@ -135,9 +137,9 @@ public class HeaderBlockTest extends TestCase {
 		assertEquals(0x000000b0, b.getFileType());
 		assertEquals(0x00000003, b.getExtraType());
 		assertEquals(0x0002, b.getStorageType());
-		assertEquals(new ByteSource(new byte[] {0x00,0x1c,0x10,0x5d,0x1c,0x06,0x00,0x05}).readDate(), b.getCreateWhen());
-		assertEquals(new ByteSource(new byte[] {0x00,0x11,0x11,0x5e,0x13,0x01,0x00,0x01}).readDate(), b.getModWhen());
-		assertEquals(new ByteSource(new byte[] {0x38,0x0c,0x14,0x5f,0x08,0x07,0x00,0x04}).readDate(), b.getArchiveWhen());
+		assertEquals(new LittleEndianByteInputStream(new byte[] {0x00,0x1c,0x10,0x5d,0x1c,0x06,0x00,0x05}).readDate(), b.getCreateWhen());
+		assertEquals(new LittleEndianByteInputStream(new byte[] {0x00,0x11,0x11,0x5e,0x13,0x01,0x00,0x01}).readDate(), b.getModWhen());
+		assertEquals(new LittleEndianByteInputStream(new byte[] {0x38,0x0c,0x14,0x5f,0x08,0x07,0x00,0x04}).readDate(), b.getArchiveWhen());
 		assertEquals(0x0000, b.getOptionSize());
 		assertNull(b.getFilename());
 	}

@@ -3,7 +3,6 @@ package com.webcodepro.shrinkit.io;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.webcodepro.shrinkit.ByteSource;
 
 /**
  * The RleInputStream handles the NuFX RLE data stream.
@@ -15,7 +14,7 @@ import com.webcodepro.shrinkit.ByteSource;
  * @author robgreene@users.sourceforge.net
  */
 public class RleInputStream extends InputStream {
-	private ByteSource bs;
+	private LittleEndianByteInputStream bs;
 	private int escapeChar;
 	private int repeatedByte;
 	private int numBytes = -1;
@@ -23,13 +22,13 @@ public class RleInputStream extends InputStream {
 	/**
 	 * Create an RLE input stream with the default marker byte.
 	 */
-	public RleInputStream(ByteSource bs) {
+	public RleInputStream(LittleEndianByteInputStream bs) {
 		this(bs, 0xdb);
 	}
 	/**
 	 * Create an RLE input stream with the specified marker byte.
 	 */
-	public RleInputStream(ByteSource bs, int escapeChar) {
+	public RleInputStream(LittleEndianByteInputStream bs, int escapeChar) {
 		this.bs = bs;
 		this.escapeChar = escapeChar;
 	}

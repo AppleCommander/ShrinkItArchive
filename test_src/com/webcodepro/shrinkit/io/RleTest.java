@@ -7,7 +7,6 @@ import java.io.OutputStream;
 
 import junit.framework.TestCase;
 
-import com.webcodepro.shrinkit.ByteSource;
 
 /**
  * Exercise the RLE encoder and decoders.  
@@ -16,7 +15,7 @@ import com.webcodepro.shrinkit.ByteSource;
  */
 public class RleTest extends TestCase {
 	public void testInputStream() throws IOException {
-		InputStream is = new RleInputStream(new ByteSource(getPatternFileRle()));
+		InputStream is = new RleInputStream(new LittleEndianByteInputStream(getPatternFileRle()));
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		copy(is,os);
 		byte[] expected = getPatternFileUncompressed();

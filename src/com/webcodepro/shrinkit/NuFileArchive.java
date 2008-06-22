@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.webcodepro.shrinkit.io.LittleEndianByteInputStream;
+
 /**
  * Basic reading of a NuFX archive.
  * 
@@ -18,7 +20,7 @@ public class NuFileArchive {
 	 * Read in the NuFile/NuFX/Shrinkit archive.
 	 */
 	public NuFileArchive(InputStream inputStream) throws IOException {
-		ByteSource bs = new ByteSource(inputStream);
+		LittleEndianByteInputStream bs = new LittleEndianByteInputStream(inputStream);
 		master = new MasterHeaderBlock(bs);
 		headers = new ArrayList<HeaderBlock>();
 		for (int i=0; i<master.getTotalRecords(); i++) {

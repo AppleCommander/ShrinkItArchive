@@ -3,6 +3,8 @@ package com.webcodepro.shrinkit;
 import java.io.IOException;
 import java.util.Date;
 
+import com.webcodepro.shrinkit.io.LittleEndianByteInputStream;
+
 /**
  * The Master Header Block contains information about the entire
  * ShrinkIt archive.
@@ -25,9 +27,9 @@ public class MasterHeaderBlock {
 	private long masterEof;
 	
 	/**
-	 * Create the Master Header Block, based on the ByteSource.
+	 * Create the Master Header Block, based on the LittleEndianByteInputStream.
 	 */
-	public MasterHeaderBlock(ByteSource bs) throws IOException {
+	public MasterHeaderBlock(LittleEndianByteInputStream bs) throws IOException {
 		bs.checkNuFileId();
 		masterCrc = bs.readWord();
 		bs.resetCrc();	// CRC is computed from this point to the end of the header
