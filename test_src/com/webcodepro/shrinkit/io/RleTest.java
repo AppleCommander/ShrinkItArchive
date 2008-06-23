@@ -5,15 +5,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import junit.framework.TestCase;
-
-
 /**
  * Exercise the RLE encoder and decoders.  
  * 
  * @author robgreene@users.sourceforge.net
  */
-public class RleTest extends TestCase {
+public class RleTest extends TestCaseHelper {
 	public void testInputStream() throws IOException {
 		InputStream is = new RleInputStream(new LittleEndianByteInputStream(getPatternFileRle()));
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -23,12 +20,6 @@ public class RleTest extends TestCase {
 		assertEquals(expected, actual);
 	}
 	
-	private void assertEquals(byte[] expected, byte[] actual) {
-		assertEquals(expected.length, actual.length);
-		for (int i=0; i<expected.length; i++) {
-			assertEquals("Byte mismatch at offset " + i, expected[i], actual[i]);
-		}
-	}
 	private void copy(InputStream is, OutputStream os) throws IOException {
 		int b = is.read();
 		while (b != -1) {

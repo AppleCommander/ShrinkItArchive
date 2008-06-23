@@ -14,7 +14,7 @@ import java.io.InputStream;
  * @author robgreene@users.sourceforge.net
  */
 public class RleInputStream extends InputStream {
-	private LittleEndianByteInputStream bs;
+	private InputStream bs;
 	private int escapeChar;
 	private int repeatedByte;
 	private int numBytes = -1;
@@ -22,13 +22,13 @@ public class RleInputStream extends InputStream {
 	/**
 	 * Create an RLE input stream with the default marker byte.
 	 */
-	public RleInputStream(LittleEndianByteInputStream bs) {
+	public RleInputStream(InputStream bs) {
 		this(bs, 0xdb);
 	}
 	/**
 	 * Create an RLE input stream with the specified marker byte.
 	 */
-	public RleInputStream(LittleEndianByteInputStream bs, int escapeChar) {
+	public RleInputStream(InputStream bs, int escapeChar) {
 		this.bs = bs;
 		this.escapeChar = escapeChar;
 	}
