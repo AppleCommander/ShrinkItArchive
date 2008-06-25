@@ -84,6 +84,15 @@ public class BitInputStream extends InputStream {
         data >>= requestedNumberOfBits; 
         bitsOfData-= requestedNumberOfBits; 
         return b; 
-    } 
+    }
+    
+    /**
+     * When shifting from buffer to buffer, the input stream also should be reset.
+     * This allows the "left over" bits to be cleared.
+     */
+    public void clearRemainingBitsOfData() {
+    	this.bitsOfData = 0;
+    	this.data = 0;
+    }
 } 
 

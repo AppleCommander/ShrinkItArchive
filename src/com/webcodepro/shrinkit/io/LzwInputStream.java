@@ -20,6 +20,7 @@ public class LzwInputStream extends InputStream {
 	private BitInputStream is;
 	private List<int[]> dictionary;
 	private Queue<Integer> outputBuffer = new ConcurrentLinkedQueue<Integer>();
+	private boolean newBuffer = true;
 	// See Wikipedia entry on LZW for variable naming
 	private int k;
 	private int[] w;
@@ -57,11 +58,14 @@ public class LzwInputStream extends InputStream {
 			dictionary = new ArrayList<int[]>();
 			for (short i=0; i<256; i++) dictionary.add(new int[] { i });
 			dictionary.add(new int[] { 0x100 });	// 0x100 not used by NuFX
+		}
+		if (newBuffer) {
 			// Setup for decompression;
 			k = is.read();
 			outputBuffer.add(k);
 			if (k == -1) return; 
 			w = new int[] { k };
+			newBuffer = false;
 		}
 		// LZW decompression
 		k = is.read();
@@ -102,5 +106,36 @@ public class LzwInputStream extends InputStream {
 	 */
 	public void clearDictionary() {
 		dictionary = null;
+		is.setRequestedNumberOfBits(9);
+		is.clearRemainingBitsOfData();
+		outputBuffer.clear();
+		k = 0;
+		w = null;
+		entry = null;
+		newBuffer = true;
+	}
+	
+//	/**
+//	 * Provide necessary housekeeping to reset LZW stream between NuFX buffer changes.
+//	 * The dictionary is the only item that is not cleared -- that needs to be done
+//	 * explicitly since behavior between LZW/1 and LZW/2 differ. 
+//	 */
+//	public void resetState() {
+//		is.clearRemainingBitsOfData();
+//		outputBuffer.clear();
+//		k = 0;
+//		w = null;
+//		entry = null;
+//		newBuffer = true;
+//	}
+	
+	/**
+	 * Provide necessary housekeeping to reset LZW stream between NuFX buffer changes.
+	 * The dictionary is the only item that is not cleared -- that needs to be done
+	 * explicitly since behavior between LZW/1 and LZW/2 differ. 
+	 */
+	public void clearData() {
+		is.clearRemainingBitsOfData();
+		outputBuffer.clear();
 	}
 }

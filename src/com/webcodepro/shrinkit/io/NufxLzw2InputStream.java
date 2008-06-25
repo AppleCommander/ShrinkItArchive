@@ -6,23 +6,19 @@ import java.io.InputStream;
 import com.webcodepro.shrinkit.CRC16;
 
 /**
- * The <code>Lzw1InputStream</code> reads a data fork or
- * resource fork written in the NuFX LZW/1 format.
+ * The <code>NufxLzw2InputStream</code> reads a data fork or
+ * resource fork written in the NuFX LZW/2 format.
  * <p>
- * The layout of the LZW/1 data is as follows:
+ * The layout of the LZW/2 data is as follows:
  * <table border="0">
  * <tr>
  *   <th colspan="3">"Fork" Header</th>
  * </tr><tr>
  *   <td>+0</td>
- *   <td>Word</td>
- *   <td>CRC-16 of the uncompressed data within the thread</td>
- * </tr><tr>
- *   <td>+2</td>
  *   <td>Byte</td>
- *   <td>Low-level volume number use to format 5.25" disks</td>
+ *   <td>Low-level volume number used to format 5.25" disks</td>
  * </tr><tr>
- *   <td>+3</td>
+ *   <td>+1</td>
  *   <td>Byte</td>
  *   <td>RLE character used to decode this thread</td>
  * </tr><tr>
@@ -30,22 +26,23 @@ import com.webcodepro.shrinkit.CRC16;
  * </tr><tr>
  *   <td>+0</td>
  *   <td>Word</td>
- *   <td>Length after RLE compression (if RLE is not used, length 
- *       will be 4096</td>
+ *   <td>Bits 0-12: Length after RLE compression<br/>
+ *       Bit 15: LZW flag (set to 1 if LZW used)</td>
  * </tr><tr>
  *   <td>+2</td>
- *   <td>Byte</td>
- *   <td>A $01 indicates LZW applied to this chunk; $00 that LZW
- *       <b>was not</b> applied to this chunk</td>
+ *   <td>Word</td>
+ *   <td>If LZW flag = 1, total bytes in chunk<br/>
+ *       Else (flag = 0) start of data</td>
  * </tr>
  * <table>
  * <p>
- * Note that the LZW string table is <em>cleared</em> after
- * every chunk.
+ * The LZW/2 dictionary is only cleared when the table becomes full and is indicated
+ * in the input stream by 0x100.  It is also cleared whenever a chunk that is not
+ * LZW encoded is encountered.
  *  
  * @author robgreene@users.sourceforge.net
  */
-public class Lzw1InputStream extends InputStream {
+public class NufxLzw2InputStream extends InputStream {
 	/** This is the raw data stream with all markers and compressed data. */
 	private LittleEndianByteInputStream dataStream;
 	/** Used for an LZW-only <code>InputStream</code>. */
@@ -58,19 +55,17 @@ public class Lzw1InputStream extends InputStream {
 	private InputStream decompressionStream;
 	/** Counts the number of bytes in the 4096 byte chunk. */
 	private int bytesLeftInChunk;
-	/** This is the CRC-16 for the uncompressed fork. */
-	private int givenCrc = -1;
 	/** This is the volume number for 5.25" disks. */
-	private int volumeNumber;
+	private int volumeNumber = -1;
 	/** This is the RLE character to use. */
 	private int rleCharacter;
 	/** Used to track the CRC of data we've extracted */
 	private CRC16 dataCrc = new CRC16();
 	
 	/**
-	 * Create the LZW/1 input stream.
+	 * Create the LZW/2 input stream.
 	 */
-	public Lzw1InputStream(LittleEndianByteInputStream dataStream) {
+	public NufxLzw2InputStream(LittleEndianByteInputStream dataStream) {
 		this.dataStream = dataStream;
 	}
 
@@ -78,20 +73,26 @@ public class Lzw1InputStream extends InputStream {
 	 * Read the next byte in the decompressed data stream.
 	 */
 	public int read() throws IOException {
-		if (givenCrc == -1) {					// read the data or resource fork header
-			givenCrc = dataStream.readWord();
+		if (volumeNumber == -1) {				// read the data or resource fork header
 			volumeNumber = dataStream.readByte();
 			rleCharacter = dataStream.readByte();
 			lzwStream = new LzwInputStream(new BitInputStream(dataStream, 9));
-			rleStream = new RleInputStream(dataStream);
+			rleStream = new RleInputStream(dataStream, rleCharacter);
 			lzwRleStream = new RleInputStream(lzwStream);
 		}
 		if (bytesLeftInChunk == 0) {		// read the chunk header
 			bytesLeftInChunk = 4096;		// NuFX always reads 4096 bytes
-			lzwStream.clearDictionary();	// Always clear dictionary
-			int length = dataStream.readWord();
-			int lzwFlag = dataStream.readByte();
-			int flag = lzwFlag + (length == 4096 ? 0 : 2);
+//			lzwStream.newBuffer();			// Allow the LZW stream to do a little housekeeping
+			lzwStream.clearData();			// Allow the LZW stream to do a little housekeeping
+			int word = dataStream.readWord();
+			int length = word & 0x7fff;
+			int lzwFlag = word & 0x8000;
+			if (lzwFlag == 0) {				// We clear dictionary whenever a non-LZW chunk is encountered
+				lzwStream.clearDictionary();
+			} else {
+				dataStream.readWord();		// At this time, I just throw away the total bytes in this chunk...
+			}
+			int flag = (lzwFlag == 0 ? 0 : 1) + (length == 4096 ? 0 : 2);
 			switch (flag) {
 			case 0:		decompressionStream = dataStream;
 						break;
@@ -106,25 +107,13 @@ public class Lzw1InputStream extends InputStream {
 		}
 		// Now we can read a data byte
 		int b = decompressionStream.read();
+		bytesLeftInChunk--;
 		dataCrc.update(b);
 		return b;
 	}
 	
-	/**
-	 * Indicates if the computed CRC matches the CRC given in the data stream.
-	 */
-	public boolean isCrcValid() {
-		return givenCrc == dataCrc.getValue();
-	}
-	
 	// GENERATED CODE
 
-	public int getGivenCrc() {
-		return givenCrc;
-	}
-	public void setGivenCrc(int givenCrc) {
-		this.givenCrc = givenCrc;
-	}
 	public int getVolumeNumber() {
 		return volumeNumber;
 	}
@@ -137,10 +126,7 @@ public class Lzw1InputStream extends InputStream {
 	public void setRleCharacter(int rleCharacter) {
 		this.rleCharacter = rleCharacter;
 	}
-	public CRC16 getDataCrc() {
-		return dataCrc;
-	}
-	public void setDataCrc(CRC16 dataCrc) {
-		this.dataCrc = dataCrc;
+	public long getDataCrc() {
+		return dataCrc.getValue();
 	}
 }
