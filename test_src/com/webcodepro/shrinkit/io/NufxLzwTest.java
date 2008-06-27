@@ -36,6 +36,13 @@ public class NufxLzwTest extends TestCaseHelper {
 		check("PRODOS.MSTR-LZW2.SHK", "UTIL.2", "UTIL.2.bin");
 	}
 	
+	public void testUncompressedFiles() throws IOException {
+		check("UNCOMPRESSED.SHK", "APPLE.II-LZW1.SHK", "APPLE.II-LZW1.SHK");
+		check("UNCOMPRESSED.SHK", "APPLE.II-LZW2.SHK", "APPLE.II-LZW2.SHK");
+		check("UNCOMPRESSED.SHK", "PRODOS.MSTR-LZW1.SHK", "PRODOS.MSTR-LZW1.SHK");
+		check("UNCOMPRESSED.SHK", "PRODOS.MSTR-LZW2.SHK", "PRODOS.MSTR-LZW2.SHK");
+	}
+	
 	/**
 	 * Given details about an archive file and it's expected contents, locate that
 	 * file and then check it against the contents.
