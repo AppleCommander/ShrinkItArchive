@@ -1,10 +1,9 @@
 package com.webcodepro.shrinkit.io;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import com.webcodepro.shrinkit.HeaderBlock;
 import com.webcodepro.shrinkit.NuFileArchive;
@@ -16,7 +15,7 @@ import com.webcodepro.shrinkit.ThreadRecord;
  * 
  * @author robgreene@users.sourceforge.net
  */
-public class NufxLzwTest extends TestCase {
+public class NufxLzwTest extends TestCaseHelper {
 	public void testNufxLzw1() throws IOException {
 		check("APPLE.II-LZW1.SHK", "APPLE.II", "APPLE.II.txt");
 	}
@@ -44,28 +43,28 @@ public class NufxLzwTest extends TestCase {
 	protected void check(String archiveName, String archiveFile, String expectedContentFile) throws IOException {
 		NuFileArchive archive = new NuFileArchive(getClass().getResourceAsStream(archiveName));
 		List<HeaderBlock> headers = archive.getHeaderBlocks();
-		String actual = null;
+		byte[] actual = null;
 		for (HeaderBlock header : headers) {
 			if (archiveFile.equals(header.getFilename())) {
 				ThreadRecord r = header.getDataForkInputStream();
 				long bytes = r.getThreadEof();
-				StringBuffer buf = new StringBuffer();
+				ByteArrayOutputStream buf = new ByteArrayOutputStream();
 				InputStream is = r.getInputStream();
 				while ( bytes-- > 0 ) {
-					buf.append((char)is.read());
+					buf.write(is.read());
 				}
-				actual = buf.toString();
+				actual = buf.toByteArray();
 				is.close();
 				break;
 			}
 		}
 		InputStream is = getClass().getResourceAsStream(expectedContentFile);
-		StringBuffer buf = new StringBuffer();
-		int ch;
-		while ( (ch = is.read()) != -1 ) {
-			buf.append((char)ch);
+		ByteArrayOutputStream buf = new ByteArrayOutputStream();
+		int b;
+		while ( (b = is.read()) != -1 ) {
+			buf.write(b);
 		}
-		String expected = buf.toString();
+		byte[] expected = buf.toByteArray();
 		assertEquals(expected, actual);
 	}
 }
