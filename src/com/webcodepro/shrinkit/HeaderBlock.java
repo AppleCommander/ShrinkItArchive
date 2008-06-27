@@ -36,7 +36,8 @@ public class HeaderBlock {
 	private byte[] optionListBytes;
 	private byte[] attribBytes;
 	private String filename;
-	private List<ThreadRecord> threads;
+	private String rawFilename;
+	private List<ThreadRecord> threads = new ArrayList<ThreadRecord>();
 	
 	/**
 	 * Create the Header Block.  This is done dynamically since
@@ -76,7 +77,7 @@ public class HeaderBlock {
 		// Read the (defunct) filename
 		int length = bs.readWord();
 		if (length > 0) {
-			filename = new String(bs.readBytes(length));
+			rawFilename = new String(bs.readBytes(length));
 		}
 	}
 	/**
@@ -84,11 +85,51 @@ public class HeaderBlock {
 	 * each thread's data is read (per NuFX spec).
 	 */
 	public void readThreads(LittleEndianByteInputStream bs) throws IOException {
-		threads = new ArrayList<ThreadRecord>();
 		for (long l=0; l<totalThreads; l++) threads.add(new ThreadRecord(bs));
 		for (ThreadRecord r : threads) r.readThreadData(bs);
 	}
+
+	/**
+	 * Locate the filename and return it.  It may have been given in the old
+	 * location, in which case, it is in the String filename.  Otherwise it will
+	 * be in the filename thread.  If it is in the thread, we shove it in the 
+	 * filename variable just so we don't need to search for it later.  This 
+	 * should not be a problem, because if we write the file, we'll write the
+	 * more current version anyway.
+	 */
+	public String getFilename() {
+		if (filename == null) {
+			ThreadRecord r = findThreadRecord(ThreadKind.FILENAME);
+			if (r != null) filename = r.getText();
+			if (filename == null) filename = rawFilename;
+		}
+		return filename;
+	}
 	
+	/**
+	 * Get the data fork.
+	 */
+	public ThreadRecord getDataForkInputStream() throws IOException {
+		return  findThreadRecord(ThreadKind.DATA_FORK);
+	}
+
+	/**
+	 * Get the resource fork.
+	 */
+	public ThreadRecord getResourceForkInputStream() throws IOException {
+		return findThreadRecord(ThreadKind.RESOURCE_FORK);
+	}
+
+	/**
+	 * Locate a ThreadRecord by it's ThreadKind.
+	 */
+	protected ThreadRecord findThreadRecord(ThreadKind tk) {
+		for (ThreadRecord r : threads) {
+			if (r.getThreadKind() == tk) return r;
+		}
+		return null;
+	}
+
 	// GENERATED CODE
 	
 	public int getHeaderCrc() {
@@ -187,11 +228,11 @@ public class HeaderBlock {
 	public void setAttribBytes(byte[] attribBytes) {
 		this.attribBytes = attribBytes;
 	}
-	public String getFilename() {
-		return filename;
-	}
 	public void setFilename(String filename) {
 		this.filename = filename;
+	}
+	public String getRawFilename() {
+		return rawFilename;
 	}
 	public List<ThreadRecord> getThreadRecords() {
 		return threads;

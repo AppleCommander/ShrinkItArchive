@@ -141,6 +141,6 @@ public class HeaderBlockTest extends TestCase {
 		assertEquals(new LittleEndianByteInputStream(new byte[] {0x00,0x11,0x11,0x5e,0x13,0x01,0x00,0x01}).readDate(), b.getModWhen());
 		assertEquals(new LittleEndianByteInputStream(new byte[] {0x38,0x0c,0x14,0x5f,0x08,0x07,0x00,0x04}).readDate(), b.getArchiveWhen());
 		assertEquals(0x0000, b.getOptionSize());
-		assertNull(b.getFilename());
+		assertNull(b.getRawFilename());
 	}
 }

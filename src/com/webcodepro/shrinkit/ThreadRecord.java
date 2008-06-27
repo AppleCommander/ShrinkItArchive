@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import com.webcodepro.shrinkit.io.LittleEndianByteInputStream;
+import com.webcodepro.shrinkit.io.NufxLzw1InputStream;
+import com.webcodepro.shrinkit.io.NufxLzw2InputStream;
 
 /**
  * This represents a single thread from the Shrinkit archive.
@@ -69,6 +71,21 @@ public class ThreadRecord {
 	 */
 	public InputStream getRawInputStream() {
 		return new ByteArrayInputStream(threadData);
+	}
+	/**
+	 * Get the appropriate input data stream for this thread to decompress the contents.
+	 */
+	public InputStream getInputStream() throws IOException {
+		switch (threadFormat) {
+		case UNCOMPRESSED:
+			return getRawInputStream();
+		case DYNAMIC_LZW1:
+			return new NufxLzw1InputStream(new LittleEndianByteInputStream(getRawInputStream()));
+		case DYNAMIC_LZW2:
+			return new NufxLzw2InputStream(new LittleEndianByteInputStream(getRawInputStream()));
+		default:
+			throw new IOException("The thread format " + threadFormat + " does not have an InputStream associated with it!");
+		}
 	}
 	
 	// GENERATED CODE
