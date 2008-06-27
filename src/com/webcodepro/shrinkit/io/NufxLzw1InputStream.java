@@ -89,7 +89,6 @@ public class NufxLzw1InputStream extends InputStream {
 		if (bytesLeftInChunk == 0) {		// read the chunk header
 			bytesLeftInChunk = 4096;		// NuFX always reads 4096 bytes
 			lzwStream.clearDictionary();	// Always clear dictionary
-//			lzwStream.newBuffer();
 			int length = dataStream.readWord();
 			int lzwFlag = dataStream.readByte();
 			int flag = lzwFlag + (length == 4096 ? 0 : 2);
