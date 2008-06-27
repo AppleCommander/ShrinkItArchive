@@ -74,7 +74,12 @@ public class LzwInputStream extends InputStream {
 			return;
 		}
 		if (k == 0x100) {
-			clearDictionary();
+			dictionary = null;
+			is.setRequestedNumberOfBits(9);
+			k = 0;
+			w = null;
+			entry = null;
+			newBuffer = true;
 			fillBuffer();	// Warning: recursive call
 			return;
 		}
@@ -114,20 +119,6 @@ public class LzwInputStream extends InputStream {
 		entry = null;
 		newBuffer = true;
 	}
-	
-//	/**
-//	 * Provide necessary housekeeping to reset LZW stream between NuFX buffer changes.
-//	 * The dictionary is the only item that is not cleared -- that needs to be done
-//	 * explicitly since behavior between LZW/1 and LZW/2 differ. 
-//	 */
-//	public void resetState() {
-//		is.clearRemainingBitsOfData();
-//		outputBuffer.clear();
-//		k = 0;
-//		w = null;
-//		entry = null;
-//		newBuffer = true;
-//	}
 	
 	/**
 	 * Provide necessary housekeeping to reset LZW stream between NuFX buffer changes.
