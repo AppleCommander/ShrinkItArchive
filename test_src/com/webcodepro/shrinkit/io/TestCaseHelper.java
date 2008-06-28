@@ -12,7 +12,7 @@ public abstract class TestCaseHelper extends TestCase {
 	 * Compare two byte arrays.
 	 */
 	public void assertEquals(byte[] expected, byte[] actual) {
-		assertEquals(expected.length, actual.length);
+		assertEquals("Length mismatch", expected.length, actual.length);
 		for (int i=0; i<expected.length; i++) {
 			assertEquals("Byte mismatch at offset " + i, expected[i], actual[i]);
 		}
