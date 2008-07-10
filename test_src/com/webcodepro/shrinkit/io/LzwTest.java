@@ -1,17 +1,15 @@
 package com.webcodepro.shrinkit.io;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
-import junit.framework.TestCase;
-
 
 /**
  * Exercise the LZW encoder and decoders.
  * 
  * @author robgreene@users.sourceforge.net
  */
-public class LzwTest extends TestCase {
+public class LzwTest extends TestCaseHelper {
 	public void testLzwDecoder() throws IOException {
 		LzwInputStream is = new LzwInputStream(new BitInputStream(new ByteArrayInputStream(getHgrColorsLzw1()), 9));
 		int[] expected = getHgrColorsUncompressed();
@@ -19,10 +17,19 @@ public class LzwTest extends TestCase {
 		int[] actual = new int[expected.length];
 		for (int i=0; i<actual.length; i++) actual[i] = is.read();
 		
-		assertEquals("Expecting end of stream", -1, is.read());    
-		for (int i=0; i<expected.length; i++) {
-			assertEquals("Testing value #" + i, expected[i], actual[i]);
-		}
+		assertEquals("Expecting end of stream", -1, is.read());
+		assertEquals(expected, actual);
+	}
+	public void testLzwEncoder() throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		LzwOutputStream os = new LzwOutputStream(new BitOutputStream(baos, 9));
+		byte[] expected = getHgrColorsLzw1();
+
+		os.write(asBytes(getHgrColorsUncompressed()));
+		os.close();
+		byte[] actual = baos.toByteArray();
+		
+		assertEquals(expected, actual);
 	}
 
 	public void testLzwDecoder2() throws IOException {
@@ -51,6 +58,17 @@ public class LzwTest extends TestCase {
 		}
 		System.out.printf("** END **");
 	}
+	
+	protected byte[] asBytes(int[] source) {
+		byte[] array = new byte[source.length];
+		for (int i=0; i<source.length; i++) array[i] = (byte)(source[i] & 0xff);
+		return array;
+	}
+	protected int[] asInts(byte[] source) {
+		int[] array = new int[source.length];
+		for (int i=0; i<source.length; i++) array[i] = source[i] & 0xff;
+		return array;
+	}
 
 	protected byte[] getHgrColorsLzw1() {
 		return new byte[] {
@@ -71,7 +89,7 @@ public class LzwTest extends TestCase {
 				0x00, 0xff, 0xdb, 0x00, 0xff, 0xdb, 0x00, 0xff, 
 				0xdb, 0x00, 0xff, 0xdb, 0x00, 0xff, 0xdb, 0x00, 
 				0xff, 0xdb, 0x00, 0xff, 0xdb, 0x00, 0xff, 0xdb, 
-				0x00, 0xe7
+				0x00, 0xff, 0xdb, 0x00, 0xe7
 			};
 	}
 	
