@@ -96,9 +96,9 @@ public class LzwInputStream extends InputStream {
 		newEntry[w.length] = entry[0];
 		dictionary.add(newEntry);
 		w = entry;
-		// Exclusive the current bitmask against the new dictionary size -- if all bits are
+		// Exclusive-OR the current bitmask against the new dictionary size -- if all bits are
 		// on, we'll get 0.  (That is, all 9 bits on is 0x01ff exclusive or bit mask of 0x01ff 
-		// yields 0x0000.)  This tells us we need to increase the number of bits we're puling
+		// yields 0x0000.)  This tells us we need to increase the number of bits we're pulling
 		// from the bit stream.
 		if ((dictionary.size() ^ is.getBitMask()) == 0) {
 			is.increaseRequestedNumberOfBits();
