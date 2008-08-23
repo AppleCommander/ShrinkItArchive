@@ -86,13 +86,17 @@ public class LzwInputStream extends InputStream {
 		if (k < dictionary.size()) {
 			entry = dictionary.get(k);
 		} else if (k == dictionary.size()) {
-			entry = Arrays.copyOf(w, w.length+1);
+			//entry = Arrays.copyOf(w, w.length+1);
+			entry = new int[w.length+1];
+			System.arraycopy(w, 0, entry, 0, w.length);
 			entry[w.length] = w[0];
 		} else {
 			throw new IOException("Invalid code of <" + k + "> encountered");
 		}
 		for (int i : entry) outputBuffer.add(i);
-		int[] newEntry = Arrays.copyOf(w, w.length+1);
+		//int[] newEntry = Arrays.copyOf(w, w.length+1);
+		int[] newEntry = new int[w.length+1];
+		System.arraycopy(w, 0, newEntry, 0, w.length);
 		newEntry[w.length] = entry[0];
 		dictionary.add(newEntry);
 		w = entry;
