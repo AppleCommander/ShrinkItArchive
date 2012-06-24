@@ -20,20 +20,20 @@ public enum ThreadKind {
 			case 0x0001: return ALLOCATED_SPACE;
 			case 0x0002: return APPLE_IIGS_ICON;
 			}
-			throw new IllegalArgumentException("Unknown thread_kind for message thread_class of " + threadKind);
+			throw new IllegalArgumentException("Unknown thread_kind "+threadKind+" for message thread_class of " + threadClass);
 		case CONTROL:
 			if (threadKind == 0x0000) return CREATE_DIRECTORY;
-			throw new IllegalArgumentException("Unknown thread_kind for control thread_class of " + threadKind);
+			throw new IllegalArgumentException("Unknown thread_kind "+threadKind+" for control thread_class of " + threadClass);
 		case DATA:
 			switch (threadKind) {
 			case 0x0000: return DATA_FORK;
 			case 0x0001: return DISK_IMAGE;
 			case 0x0002: return RESOURCE_FORK;
 			}
-			throw new IllegalArgumentException("Unknown thread_kind for data thread_class of " + threadKind);
+			throw new IllegalArgumentException("Unknown thread_kind "+threadKind+" for data thread_class of " + threadClass);
 		case FILENAME:
 			if (threadKind == 0x0000) return FILENAME;
-			throw new IllegalArgumentException("Unknown thread_kind for filename thread_class of " + threadKind);
+			throw new IllegalArgumentException("Unknown thread_kind "+threadKind+" for filename thread_class of " + threadClass);
 		default:
 			throw new IllegalArgumentException("Unknown thread_class of " + threadClass);
 		}
