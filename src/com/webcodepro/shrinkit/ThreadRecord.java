@@ -31,15 +31,43 @@ public class ThreadRecord {
 	private byte[] threadData;
 
 	/**
-	 * Construct the ThreadRecord and read the header details.
+	 * Construct the ThreadRecord and read the header details with no hints
+	 * from the Header Block.
 	 */
 	public ThreadRecord(LittleEndianByteInputStream bs) throws IOException {
+		this(null, bs);
+	}
+
+	/**
+	 * Construct the ThreadRecord and read the header details.
+	 */
+	public ThreadRecord(HeaderBlock hb, LittleEndianByteInputStream bs) throws IOException {
 		threadClass = ThreadClass.find(bs.readWord());
 		threadFormat = ThreadFormat.find(bs.readWord());
 		threadKind = ThreadKind.find(bs.readWord(), threadClass);
 		threadCrc = bs.readWord();
 		threadEof = bs.readLong();
 		compThreadEof = bs.readLong();
+		if ((threadKind == ThreadKind.DISK_IMAGE) && (hb != null)) {
+			/* If we have hints from the header block, repair some disk image related bugs. */
+			if (hb.getStorageType() <= 13 ) {
+				/* supposed to be block size, but SHK v3.0.1 stored it wrong */
+				threadEof = hb.getExtraType() * 512;
+				System.out.println("Found erroneous storage type... fixing.");
+			} else if (hb.getStorageType() == 256 &&
+					hb.getExtraType() == 280 &&
+					hb.getFileSysId() == 2 ) { // FileSysDOS33
+				/*
+				 * Fix for less-common ShrinkIt problem: looks like an old
+				 * version of GS/ShrinkIt used 256 as the block size when
+				 * compressing DOS 3.3 images from 5.25" disks.  If that
+				 * appears to be the case here, crank up the block size.
+				 */
+				threadEof = hb.getExtraType() * 512;
+			} else {
+				threadEof = hb.getExtraType() * hb.getStorageType();
+			}
+		}
 	}
 
 	/**

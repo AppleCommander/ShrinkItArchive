@@ -85,7 +85,7 @@ public class HeaderBlock {
 	 * each thread's data is read (per NuFX spec).
 	 */
 	public void readThreads(LittleEndianByteInputStream bs) throws IOException {
-		for (long l=0; l<totalThreads; l++) threads.add(new ThreadRecord(bs));
+		for (long l=0; l<totalThreads; l++) threads.add(new ThreadRecord(this, bs));
 		for (ThreadRecord r : threads) r.readThreadData(bs);
 	}
 
