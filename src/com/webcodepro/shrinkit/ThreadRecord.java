@@ -53,7 +53,7 @@ public class ThreadRecord {
 			if (hb.getStorageType() <= 13 ) {
 				/* supposed to be block size, but SHK v3.0.1 stored it wrong */
 				threadEof = hb.getExtraType() * 512;
-				System.out.println("Found erroneous storage type... fixing.");
+				// System.out.println("Found erroneous storage type... fixing.");
 			} else if (hb.getStorageType() == 256 &&
 					hb.getExtraType() == 280 &&
 					hb.getFileSysId() == 2 ) { // FileSysDOS33
