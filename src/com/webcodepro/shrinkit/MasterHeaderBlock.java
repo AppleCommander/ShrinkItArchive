@@ -31,10 +31,11 @@ public class MasterHeaderBlock {
 	 * Create the Master Header Block, based on the LittleEndianByteInputStream.
 	 */
 	public MasterHeaderBlock(LittleEndianByteInputStream bs) throws IOException {
-		int headerOffset = 0;
+		int headerOffset = 0; // Binary II wrappers will need to bump out the normal header size
 		nuFileId = bs.readBytes(6);
 		
 		if (checkId(nuFileId,BXY_ID)) {
+			// Binary II wrapper present...
 			bs.readBytes(127 - NUFILE_ID.length);
 			headerOffset = 128;
 			int count = bs.read();
