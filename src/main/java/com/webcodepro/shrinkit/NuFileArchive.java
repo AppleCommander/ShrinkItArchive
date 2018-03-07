@@ -15,7 +15,15 @@ import com.webcodepro.shrinkit.io.LittleEndianByteInputStream;
 public class NuFileArchive {
 	private MasterHeaderBlock master;
 	private List<HeaderBlock> headers;
-	
+	private long totalSize = 0;
+
+	/**
+	 * Need to enumerate some basic sub-types of archives.
+	 */
+	public static final int NUFILE_ARCHIVE = 1;
+	public static final int NUFX_ARCHIVE = 2;
+	public static final int BXY_ARCHIVE = 3;
+
 	/**
 	 * Read in the NuFile/NuFX/Shrinkit archive.
 	 */
@@ -27,7 +35,15 @@ public class NuFileArchive {
 			HeaderBlock header = new HeaderBlock(bs);
 			header.readThreads(bs);
 			headers.add(header);
+			totalSize += header.getHeaderSize();
 		}
+	}
+
+	/**
+	 * @return long size in bytes of the archive
+	 */
+	public long getArchiveSize() {
+		return totalSize;
 	}
 
 	public MasterHeaderBlock getMasterHeaderBlock() {
@@ -35,5 +51,4 @@ public class NuFileArchive {
 	}
 	public List<HeaderBlock> getHeaderBlocks() {
 		return headers;
-	}
-}
+	}}

@@ -37,6 +37,7 @@ public class HeaderBlock {
 	private byte[] attribBytes;
 	private String filename;
 	private String rawFilename;
+	private long headerSize = 0;
 	private List<ThreadRecord> threads = new ArrayList<ThreadRecord>();
 	
 	/**
@@ -44,7 +45,9 @@ public class HeaderBlock {
 	 * the Header Block size varies significantly.
 	 */
 	public HeaderBlock(LittleEndianByteInputStream bs) throws IOException {
-		bs.checkNuFxId();
+		int type = bs.seekFileType(4);
+		if (type == 0)
+			throw new IOException("Unable to decode this archive.");  // FIXME - NLS
 		headerCrc = bs.readWord();
 		attribCount = bs.readWord();
 		versionNumber = bs.readWord();
@@ -86,7 +89,10 @@ public class HeaderBlock {
 	 */
 	public void readThreads(LittleEndianByteInputStream bs) throws IOException {
 		for (long l=0; l<totalThreads; l++) threads.add(new ThreadRecord(this, bs));
-		for (ThreadRecord r : threads) r.readThreadData(bs);
+		for (ThreadRecord r : threads) {
+			r.readThreadData(bs);
+			headerSize += r.getThreadEof();
+		}
 	}
 
 	/**
@@ -102,7 +108,21 @@ public class HeaderBlock {
 			ThreadRecord r = findThreadRecord(ThreadKind.FILENAME);
 			if (r != null) filename = r.getText();
 			if (filename == null) filename = rawFilename;
+			if (filename.contains(":")) {
+				filename = filename.replace(":","/");
+			}
 		}
+		return filename;
+	}
+	
+	/**
+	 * Final element in the path, in those cases where a filename actually holds a path name
+	 */
+	public String getFinalFilename() {
+		String filename = getFilename();
+		String[] path;
+		path = filename.split("/");
+		filename = path[path.length - 1];
 		return filename;
 	}
 	
@@ -239,5 +259,8 @@ public class HeaderBlock {
 	}
 	public void setThreadRecords(List<ThreadRecord> threads) {
 		this.threads = threads;
+	}
+	public long getHeaderSize() {
+		return headerSize;
 	}
 }
