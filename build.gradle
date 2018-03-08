@@ -1,5 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'application'
+apply plugin: 'maven'
+apply plugin: 'signing'
 
 repositories {
     jcenter()  
@@ -16,5 +18,64 @@ jar {
     attributes(
       'Main-Class': mainClassName
     )
+  }
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      pom.project {
+        name archivesBaseName
+        packaging 'jar'
+        description 'A Java library for managing Apple II ShrinkIt archives.'
+        url 'https://applecommander.github.io/'
+
+        scm {
+          url 'https://github.com/AppleCommander/ShrinkItArchive'
+        }
+
+        licenses {
+          license {
+            name 'The GNU General Public License (GPL) Version 2, June 1991'
+            url 'https://www.gnu.org/licenses/gpl-2.0.html'
+          }
+        }
+
+        developers {
+          developer {
+            id 'robgreene'
+            email 'robgreene@gmail.com'
+          }
+        }
+      }
+    }
   }
 }
