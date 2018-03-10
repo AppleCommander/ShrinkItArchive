@@ -64,9 +64,8 @@ public class LittleEndianByteOutputStream extends OutputStream implements ByteCo
 	}
 	/**
 	 * Write the Java Date object as a TimeRec.
-	 * Note that years 2000-2039 are assumed to be 00-39 per the NuFX addendum
-	 * at http://www.nulib.com/library/nufx-addendum.htm.
-	 * @see http://www.nulib.com/library/nufx-addendum.htm
+	 * Note that years 2000-2039 are assumed to be 00-39 per the NuFX addendum.
+	 * @see <a href="http://www.nulib.com/library/nufx-addendum.htm">NuFX addendum</a>
 	 */
 	public void writeDate(Date date) throws IOException {
 		byte[] data = null;

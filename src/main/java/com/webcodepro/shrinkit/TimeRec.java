@@ -75,9 +75,8 @@ public class TimeRec {
 
 	/**
 	 * Convert the TimeRec into a Java Date object.
-	 * Note that years 1900-1939 are assumed to be 2000-2039 per the NuFX addendum
-	 * at http://www.nulib.com/library/nufx-addendum.htm.
-	 * @see http://www.nulib.com/library/nufx-addendum.htm
+	 * Note that years 1900-1939 are assumed to be 2000-2039 per the NuFX addendum.
+	 * @see <a href="http://www.nulib.com/library/nufx-addendum.htm">NuFX addendum</a>
 	 */
 	public Date getDate() {
 		int year = data[YEAR]+1900;

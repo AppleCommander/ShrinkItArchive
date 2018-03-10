@@ -15,7 +15,7 @@ import com.webcodepro.shrinkit.io.LittleEndianByteInputStream;
  * version, and those are documented in the getter methods.
  *  
  * @author robgreene@users.sourceforge.net
- * @see http://www.nulib.com/library/FTN.e08002.htm
+ * @see <a href="http://www.nulib.com/library/FTN.e08002.htm">Apple II File Type Note $E0/$8002</a>
  */
 public class MasterHeaderBlock {
 	private static final int MASTER_HEADER_LENGTH = 48;

@@ -49,7 +49,7 @@ public class LzwInputStream extends InputStream {
 	 * Fill the buffer up with some decompressed data.
 	 * This may range from one byte to many bytes, depending on what is in the
 	 * dictionary.
-	 * @see http://en.wikipedia.org/wiki/Lzw for the general algorithm
+	 * @see <a href="http://en.wikipedia.org/wiki/Lzw">Wikipedia for the general algorithm</a>
 	 */
 	public void fillBuffer() throws IOException {
 		if (dictionary == null) {

@@ -6,7 +6,7 @@ package com.webcodepro.shrinkit.io;
  * 
  * @author robgreene@users.sourceforge.net
  * @see LittleEndianByteInputStream
- * @see ByteTarget
+ * @see LittleEndianByteOutputStream
  */
 public interface ByteConstants {
 	/** Master Header Block identifier "magic" bytes. */

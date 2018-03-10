@@ -72,7 +72,7 @@ public class RleOutputStream extends OutputStream {
 	}
 	
 	/**
-	 * Close out the data stream.  Makes sure the repeate buffer
+	 * Close out the data stream.  Makes sure the repeat buffer
 	 * is flushed.
 	 */
 	public void close() throws IOException {
