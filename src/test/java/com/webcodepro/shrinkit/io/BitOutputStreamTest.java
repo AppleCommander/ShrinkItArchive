@@ -3,12 +3,15 @@ package com.webcodepro.shrinkit.io;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.junit.Test;
+
 /**
  * Exercise the BitOutputStream.  
  * 
  * @author robgreene@users.sourceforge.net
  */
-public class BitOutputStreamTest extends TestCaseHelper {
+public class BitOutputStreamTest extends TestBase {
+	@Test
     public void test1() throws IOException { 
         byte[] expected = new byte[] { 
                 0x01, 0x01, 0x01, 0x01, 

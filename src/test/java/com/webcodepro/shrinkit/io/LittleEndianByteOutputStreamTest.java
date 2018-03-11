@@ -5,11 +5,14 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import org.junit.Test;
+
 /**
  * Exercise the LittleEndianByteOutputStream class.
  * @author robgreene@users.sourceforge.net
  */
-public class LittleEndianByteOutputStreamTest extends TestCaseHelper {
+public class LittleEndianByteOutputStreamTest extends TestBase {
+	@Test
 	public void testWriteA() throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		LittleEndianByteOutputStream bs = new LittleEndianByteOutputStream(os);
@@ -17,6 +20,7 @@ public class LittleEndianByteOutputStreamTest extends TestCaseHelper {
 		bs.close();
 		assertEquals("a".getBytes(), os.toByteArray());
 	}
+	@Test
 	public void testWriteB() throws IOException {
 		// Just to ensure we can write chunks of bytes...
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -25,6 +29,7 @@ public class LittleEndianByteOutputStreamTest extends TestCaseHelper {
 		bs.close();
 		assertEquals("hello".getBytes(), os.toByteArray());
 	}
+	@Test
 	public void testWriteNuFileId() throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		LittleEndianByteOutputStream bs = new LittleEndianByteOutputStream(os);
@@ -32,6 +37,7 @@ public class LittleEndianByteOutputStreamTest extends TestCaseHelper {
 		bs.close();
 		assertEquals(new byte[] { 0x4e, (byte)0xf5, 0x46, (byte)0xe9, 0x6c, (byte)0xe5 }, os.toByteArray());
 	}
+	@Test
 	public void testCheckNuFxId() throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		LittleEndianByteOutputStream bs = new LittleEndianByteOutputStream(os);
@@ -39,6 +45,7 @@ public class LittleEndianByteOutputStreamTest extends TestCaseHelper {
 		bs.close();
 		assertEquals(new byte[] { 0x4e, (byte)0xf5, 0x46, (byte)0xd8 }, os.toByteArray());
 	}
+	@Test
 	public void testWriteWord() throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		LittleEndianByteOutputStream bs = new LittleEndianByteOutputStream(os);
@@ -47,6 +54,7 @@ public class LittleEndianByteOutputStreamTest extends TestCaseHelper {
 		bs.close();
 		assertEquals(new byte[] { 0x01, 0x02, 0x03, 0x04 }, os.toByteArray());
 	}
+	@Test
 	public void testWriteWordHighBitSet() throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		LittleEndianByteOutputStream bs = new LittleEndianByteOutputStream(os);
@@ -54,6 +62,7 @@ public class LittleEndianByteOutputStreamTest extends TestCaseHelper {
 		bs.close();
 		assertEquals(new byte[] { (byte)0xff, (byte)0xff }, os.toByteArray());
 	}
+	@Test
 	public void testWriteLong() throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		LittleEndianByteOutputStream bs = new LittleEndianByteOutputStream(os);
@@ -61,6 +70,7 @@ public class LittleEndianByteOutputStreamTest extends TestCaseHelper {
 		bs.close();
 		assertEquals(new byte[] { 0x01, 0x02, 0x03, 0x04 }, os.toByteArray());
 	}
+	@Test
 	public void testWriteLongHighBitSet() throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		LittleEndianByteOutputStream bs = new LittleEndianByteOutputStream(os);
@@ -68,6 +78,7 @@ public class LittleEndianByteOutputStreamTest extends TestCaseHelper {
 		bs.close();
 		assertEquals(new byte[] { (byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff }, os.toByteArray());
 	}
+	@Test
 	public void testWriteDate() throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		LittleEndianByteOutputStream bs = new LittleEndianByteOutputStream(os);
@@ -83,6 +94,7 @@ public class LittleEndianByteOutputStreamTest extends TestCaseHelper {
 			};
 		assertEquals(expected, os.toByteArray());
 	}
+	@Test
 	public void testWriteNullDate() throws IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		LittleEndianByteOutputStream bs = new LittleEndianByteOutputStream(os);

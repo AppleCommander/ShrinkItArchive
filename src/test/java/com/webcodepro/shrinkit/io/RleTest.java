@@ -6,15 +6,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.junit.Test;
+
 /**
  * Exercise the RLE encoder and decoders.  
  * 
  * @author robgreene@users.sourceforge.net
  */
-public class RleTest extends TestCaseHelper {
+public class RleTest extends TestBase {
 	/**
 	 * Test the RleInputStream to verify decoding.
 	 */
+	@Test
 	public void testInputStream() throws IOException {
 		InputStream is = new RleInputStream(new ByteArrayInputStream(getPatternFileRle()));
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -26,6 +29,7 @@ public class RleTest extends TestCaseHelper {
 	/**
 	 * Test the RleOutputStream to verify compression.
 	 */
+	@Test
 	public void testOutputStream() throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		RleOutputStream os = new RleOutputStream(baos);
@@ -39,6 +43,7 @@ public class RleTest extends TestCaseHelper {
 	 * Test the RleOutputStream with the escape character to ensure it <em>always</em> is encoded.
 	 * Note that a file with lots of 0xdb codes will grow.
 	 */
+	@Test
 	public void testOutputStreamEscapeCharacter() throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		RleOutputStream os = new RleOutputStream(baos);

@@ -54,49 +54,47 @@ public class NufxScan {
 	
 	private static void display(File archive) throws IOException {
 		System.out.printf("Details for %s\n\n", archive.getAbsoluteFile());
-		InputStream is = new FileInputStream(archive);
-		if (is == null) {
-			throw new IOException("Unable to locate '" + archive.getAbsoluteFile() + "'");
-		}
-		NuFileArchive a = new NuFileArchive(is);
-		System.out.println("Ver# Threads  FSId FSIn Access   FileType ExtraTyp Stor Thread Formats..... OrigSize CompSize Filename");
-		System.out.println("==== ======== ==== ==== ======== ======== ======== ==== =================== ======== ======== ==============================");
-		for (HeaderBlock b : a.getHeaderBlocks()) {
-			System.out.printf("%04x %08x %04x %04x %08x %08x %08x %04x ",
-					b.getVersionNumber(), b.getTotalThreads(), b.getFileSysId(), b.getFileSysInfo(), b.getAccess(),
-					b.getFileType(), b.getExtraType(), b.getStorageType());
-			int threadsPrinted = 0;
-			String filename = b.getFilename();
-			long origSize = 0;
-			long compSize = 0;
-			boolean compressed = false;
-			for (ThreadRecord r : b.getThreadRecords()) {
-				threadsPrinted++;
-				System.out.printf("%04x ", r.getThreadFormat().getThreadFormat());
-				compressed |= (r.getThreadFormat() != ThreadFormat.UNCOMPRESSED);
-				if (r.getThreadKind() == ThreadKind.FILENAME) {
-					filename = r.getText();
+		try (InputStream is = new FileInputStream(archive)) {
+			NuFileArchive a = new NuFileArchive(is);
+			System.out.println("Ver# Threads  FSId FSIn Access   FileType ExtraTyp Stor Thread Formats..... OrigSize CompSize Filename");
+			System.out.println("==== ======== ==== ==== ======== ======== ======== ==== =================== ======== ======== ==============================");
+			for (HeaderBlock b : a.getHeaderBlocks()) {
+				System.out.printf("%04x %08x %04x %04x %08x %08x %08x %04x ",
+						b.getVersionNumber(), b.getTotalThreads(), b.getFileSysId(), b.getFileSysInfo(), b.getAccess(),
+						b.getFileType(), b.getExtraType(), b.getStorageType());
+				int threadsPrinted = 0;
+				String filename = b.getFilename();
+				long origSize = 0;
+				long compSize = 0;
+				boolean compressed = false;
+				for (ThreadRecord r : b.getThreadRecords()) {
+					threadsPrinted++;
+					System.out.printf("%04x ", r.getThreadFormat().getThreadFormat());
+					compressed |= (r.getThreadFormat() != ThreadFormat.UNCOMPRESSED);
+					if (r.getThreadKind() == ThreadKind.FILENAME) {
+						filename = r.getText();
+					}
+					if (r.getThreadClass() == ThreadClass.DATA) {
+						origSize+= r.getThreadEof();
+						compSize+= r.getCompThreadEof();
+					}
 				}
-				if (r.getThreadClass() == ThreadClass.DATA) {
-					origSize+= r.getThreadEof();
-					compSize+= r.getCompThreadEof();
+				while (threadsPrinted < 4) {
+					System.out.printf("     ");
+					threadsPrinted++;
+				}
+				System.out.printf("%08x %08x ", origSize, compSize);
+				if (filename == null || filename.length() == 0) {
+					filename = "<Unknown>";
+				}
+				System.out.println(filename);
+				if (compressed && (sizeOfSmallestCompressedFile == 0 || compSize < sizeOfSmallestCompressedFile)) {
+					sizeOfSmallestCompressedFile = compSize;
+					archiveWithSmallestCompressedFile = archive;
+					smallestCompressedFilename = filename;
 				}
 			}
-			while (threadsPrinted < 4) {
-				System.out.printf("     ");
-				threadsPrinted++;
-			}
-			System.out.printf("%08x %08x ", origSize, compSize);
-			if (filename == null || filename.length() == 0) {
-				filename = "<Unknown>";
-			}
-			System.out.println(filename);
-			if (compressed && (sizeOfSmallestCompressedFile == 0 || compSize < sizeOfSmallestCompressedFile)) {
-				sizeOfSmallestCompressedFile = compSize;
-				archiveWithSmallestCompressedFile = archive;
-				smallestCompressedFilename = filename;
-			}
+			System.out.println();
 		}
-		System.out.println();
 	}
 }

@@ -1,10 +1,13 @@
 package com.webcodepro.shrinkit;
 
+import static com.webcodepro.shrinkit.TestHelper.checkDate;
+
 import java.io.IOException;
 
-import com.webcodepro.shrinkit.io.LittleEndianByteInputStream;
+import org.junit.Assert;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import com.webcodepro.shrinkit.io.LittleEndianByteInputStream;
 
 /**
  * Exercise the Header Block.
@@ -12,10 +15,11 @@ import junit.framework.TestCase;
  * Documentation Final Revision Three" document.
  * @author robgreene@users.sourceforge.net
  */
-public class HeaderBlockTest extends TestCase {
+public class HeaderBlockTest {
 	/**
 	 * From "NuFX Documentation Final Revision Three", version 0, "Normal Files" sample. 
 	 */
+	@Test
 	public void testNormalFiles() throws IOException {
 		byte[] data = {
 				0x4e, (byte)0xf5, 0x46, (byte)0xd8, 0x55, 0x34, 0x3a, 0x00, 
@@ -29,25 +33,26 @@ public class HeaderBlockTest extends TestCase {
 			};
 		LittleEndianByteInputStream bs = new LittleEndianByteInputStream(data);
 		HeaderBlock b = new HeaderBlock(bs);
-		assertEquals(0x3455, b.getHeaderCrc());
-		assertEquals(0x003a, b.getAttribCount());
-		assertEquals(0x0000, b.getVersionNumber());
-		assertEquals(0x00000001, b.getTotalThreads());
-		assertEquals(0x0001, b.getFileSysId());
-		assertEquals(0x002f, b.getFileSysInfo());
-		assertEquals(0x000000c3, b.getAccess());
-		assertEquals(0x00000004, b.getFileType());
-		assertEquals(0x00000000, b.getExtraType());
-		assertEquals(0x0001, b.getStorageType());
-		assertEquals(new LittleEndianByteInputStream(new byte[] {0x00,0x0a,0x01,0x58,0x16,0x0a,0x00,0x07}).readDate(), b.getCreateWhen());
-		assertEquals(new LittleEndianByteInputStream(new byte[] {0x00,0x10,0x0b,0x58,0x11,0x0b,0x00,0x05}).readDate(), b.getModWhen());
-		assertEquals(new LittleEndianByteInputStream(new byte[] {0x00,0x0c,0x01,0x58,0x16,0x0a,0x00,0x07}).readDate(), b.getArchiveWhen());
-		assertEquals("STUFF", b.getFilename());
+		Assert.assertEquals(0x3455, b.getHeaderCrc());
+		Assert.assertEquals(0x003a, b.getAttribCount());
+		Assert.assertEquals(0x0000, b.getVersionNumber());
+		Assert.assertEquals(0x00000001, b.getTotalThreads());
+		Assert.assertEquals(0x0001, b.getFileSysId());
+		Assert.assertEquals(0x002f, b.getFileSysInfo());
+		Assert.assertEquals(0x000000c3, b.getAccess());
+		Assert.assertEquals(0x00000004, b.getFileType());
+		Assert.assertEquals(0x00000000, b.getExtraType());
+		Assert.assertEquals(0x0001, b.getStorageType());
+		checkDate(new byte[] {0x00,0x0a,0x01,0x58,0x16,0x0a,0x00,0x07}, b.getCreateWhen());
+		checkDate(new byte[] {0x00,0x10,0x0b,0x58,0x11,0x0b,0x00,0x05}, b.getModWhen());
+		checkDate(new byte[] {0x00,0x0c,0x01,0x58,0x16,0x0a,0x00,0x07}, b.getArchiveWhen());
+		Assert.assertEquals("STUFF", b.getFilename());
 	}
 	
 	/**
 	 * From "NuFX Documentation Final Revision Three", version 0, "Extended Files" sample. 
 	 */
+	@Test
 	public void testExtendedFiles() throws IOException {
 		byte[] data = {
 				0x4e, (byte)0xf5, 0x46, (byte)0xd8, 0x65, 0x78, 0x3a, 0x00, 
@@ -62,25 +67,26 @@ public class HeaderBlockTest extends TestCase {
 			};
 		LittleEndianByteInputStream bs = new LittleEndianByteInputStream(data);
 		HeaderBlock b = new HeaderBlock(bs);
-		assertEquals(0x7865, b.getHeaderCrc());
-		assertEquals(0x003a, b.getAttribCount());
-		assertEquals(0x0000, b.getVersionNumber());
-		assertEquals(0x00000002, b.getTotalThreads());
-		assertEquals(0x0001, b.getFileSysId());
-		assertEquals(0x002f, b.getFileSysInfo());
-		assertEquals(0x000000c3, b.getAccess());
-		assertEquals(0x000000b3, b.getFileType());
-		assertEquals(0x00000000, b.getExtraType());
-		assertEquals(0x0005, b.getStorageType());
-		assertEquals(new LittleEndianByteInputStream(new byte[] {0x00,0x0a,0x01,0x58,0x16,0x0a,0x00,0x07}).readDate(), b.getCreateWhen());
-		assertEquals(new LittleEndianByteInputStream(new byte[] {0x00,0x10,0x0b,0x58,0x11,0x0b,0x00,0x05}).readDate(), b.getModWhen());
-		assertEquals(new LittleEndianByteInputStream(new byte[] {0x00,0x0c,0x01,0x58,0x16,0x0a,0x00,0x07}).readDate(), b.getArchiveWhen());
-		assertEquals("EXT.STUFF", b.getFilename());
+		Assert.assertEquals(0x7865, b.getHeaderCrc());
+		Assert.assertEquals(0x003a, b.getAttribCount());
+		Assert.assertEquals(0x0000, b.getVersionNumber());
+		Assert.assertEquals(0x00000002, b.getTotalThreads());
+		Assert.assertEquals(0x0001, b.getFileSysId());
+		Assert.assertEquals(0x002f, b.getFileSysInfo());
+		Assert.assertEquals(0x000000c3, b.getAccess());
+		Assert.assertEquals(0x000000b3, b.getFileType());
+		Assert.assertEquals(0x00000000, b.getExtraType());
+		Assert.assertEquals(0x0005, b.getStorageType());
+		checkDate(new byte[] {0x00,0x0a,0x01,0x58,0x16,0x0a,0x00,0x07}, b.getCreateWhen());
+		checkDate(new byte[] {0x00,0x10,0x0b,0x58,0x11,0x0b,0x00,0x05}, b.getModWhen());
+		checkDate(new byte[] {0x00,0x0c,0x01,0x58,0x16,0x0a,0x00,0x07}, b.getArchiveWhen());
+		Assert.assertEquals("EXT.STUFF", b.getFilename());
 	}
 
 	/**
 	 * From "NuFX Documentation Final Revision Three", version 0, "Disk" sample. 
 	 */
+	@Test
 	public void testDiskImage() throws IOException {
 		byte[] data = {
 				0x4e, (byte)0xf5, 0x46, (byte)0xd8, 0x67, 0x05, 0x3a, 0x00, 
@@ -94,25 +100,26 @@ public class HeaderBlockTest extends TestCase {
 			};
 		LittleEndianByteInputStream bs = new LittleEndianByteInputStream(data);
 		HeaderBlock b = new HeaderBlock(bs);
-		assertEquals(0x0567, b.getHeaderCrc());
-		assertEquals(0x003a, b.getAttribCount());
-		assertEquals(0x0000, b.getVersionNumber());
-		assertEquals(0x00000001, b.getTotalThreads());
-		assertEquals(0x0001, b.getFileSysId());
-		assertEquals(0x002f, b.getFileSysInfo());
-		assertEquals(0x00000000, b.getAccess());
-		assertEquals(0x00000000, b.getFileType());
-		assertEquals(0x00000640, b.getExtraType());
-		assertEquals(0x0200, b.getStorageType());
-		assertEquals(new LittleEndianByteInputStream(new byte[] {0x00,0x0a,0x01,0x58,0x16,0x0a,0x00,0x07}).readDate(), b.getCreateWhen());
-		assertEquals(new LittleEndianByteInputStream(new byte[] {0x00,0x10,0x0b,0x58,0x11,0x0b,0x00,0x05}).readDate(), b.getModWhen());
-		assertEquals(new LittleEndianByteInputStream(new byte[] {0x00,0x0c,0x01,0x58,0x16,0x0a,0x00,0x07}).readDate(), b.getArchiveWhen());
-		assertEquals("DISK", b.getFilename());
+		Assert.assertEquals(0x0567, b.getHeaderCrc());
+		Assert.assertEquals(0x003a, b.getAttribCount());
+		Assert.assertEquals(0x0000, b.getVersionNumber());
+		Assert.assertEquals(0x00000001, b.getTotalThreads());
+		Assert.assertEquals(0x0001, b.getFileSysId());
+		Assert.assertEquals(0x002f, b.getFileSysInfo());
+		Assert.assertEquals(0x00000000, b.getAccess());
+		Assert.assertEquals(0x00000000, b.getFileType());
+		Assert.assertEquals(0x00000640, b.getExtraType());
+		Assert.assertEquals(0x0200, b.getStorageType());
+		checkDate(new byte[] {0x00,0x0a,0x01,0x58,0x16,0x0a,0x00,0x07}, b.getCreateWhen());
+		checkDate(new byte[] {0x00,0x10,0x0b,0x58,0x11,0x0b,0x00,0x05}, b.getModWhen());
+		checkDate(new byte[] {0x00,0x0c,0x01,0x58,0x16,0x0a,0x00,0x07}, b.getArchiveWhen());
+		Assert.assertEquals("DISK", b.getFilename());
 	}
 	
 	/**
 	 * Sample taking from the SCC.SHK file, first header entry.
 	 */
+	@Test
 	public void testSccShkHeader1() throws IOException {
 		byte[] data = {
 				0x4e, (byte)0xf5, 0x46, (byte)0xd8, 0x5e, 0x40, 0x3c, 0x00, 
@@ -127,20 +134,20 @@ public class HeaderBlockTest extends TestCase {
 			};
 		LittleEndianByteInputStream bs = new LittleEndianByteInputStream(data);
 		HeaderBlock b = new HeaderBlock(bs);
-		assertEquals(0x405e, b.getHeaderCrc());
-		assertEquals(0x003c, b.getAttribCount());
-		assertEquals(0x0003, b.getVersionNumber());
-		assertEquals(0x00000003, b.getTotalThreads());
-		assertEquals(0x0001, b.getFileSysId());
-		assertEquals(0x003a, b.getFileSysInfo());
-		assertEquals(0x000000e3, b.getAccess());
-		assertEquals(0x000000b0, b.getFileType());
-		assertEquals(0x00000003, b.getExtraType());
-		assertEquals(0x0002, b.getStorageType());
-		assertEquals(new LittleEndianByteInputStream(new byte[] {0x00,0x1c,0x10,0x5d,0x1c,0x06,0x00,0x05}).readDate(), b.getCreateWhen());
-		assertEquals(new LittleEndianByteInputStream(new byte[] {0x00,0x11,0x11,0x5e,0x13,0x01,0x00,0x01}).readDate(), b.getModWhen());
-		assertEquals(new LittleEndianByteInputStream(new byte[] {0x38,0x0c,0x14,0x5f,0x08,0x07,0x00,0x04}).readDate(), b.getArchiveWhen());
-		assertEquals(0x0000, b.getOptionSize());
-		assertNull(b.getRawFilename());
+		Assert.assertEquals(0x405e, b.getHeaderCrc());
+		Assert.assertEquals(0x003c, b.getAttribCount());
+		Assert.assertEquals(0x0003, b.getVersionNumber());
+		Assert.assertEquals(0x00000003, b.getTotalThreads());
+		Assert.assertEquals(0x0001, b.getFileSysId());
+		Assert.assertEquals(0x003a, b.getFileSysInfo());
+		Assert.assertEquals(0x000000e3, b.getAccess());
+		Assert.assertEquals(0x000000b0, b.getFileType());
+		Assert.assertEquals(0x00000003, b.getExtraType());
+		Assert.assertEquals(0x0002, b.getStorageType());
+		checkDate(new byte[] {0x00,0x1c,0x10,0x5d,0x1c,0x06,0x00,0x05}, b.getCreateWhen());
+		checkDate(new byte[] {0x00,0x11,0x11,0x5e,0x13,0x01,0x00,0x01}, b.getModWhen());
+		checkDate(new byte[] {0x38,0x0c,0x14,0x5f,0x08,0x07,0x00,0x04}, b.getArchiveWhen());
+		Assert.assertEquals(0x0000, b.getOptionSize());
+		Assert.assertNull(b.getRawFilename());
 	}
 }

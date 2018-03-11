@@ -1,23 +1,28 @@
 package com.webcodepro.shrinkit.io;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
+
+import org.junit.Test;
 
 /**
  * Test some LZW/1 format streams.
  * 
  * @author robgreene@users.sourceforge.net
  */
-public class NufxLzw1Test extends TestCaseHelper {
+public class NufxLzw1Test extends TestBase {
+	@Test
 	public void testTextFile() throws IOException {
-		NufxLzw1InputStream is = new NufxLzw1InputStream(new LittleEndianByteInputStream(getTextFileLzw1StreamData()));
-		byte[] expected = getTextFileData();
-		byte[] actual = new byte[expected.length];
-		is.read(actual);
-		assertEquals(expected, actual);
-		assertTrue(is.isCrcValid());
+		try (NufxLzw1InputStream is = new NufxLzw1InputStream(new LittleEndianByteInputStream(getTextFileLzw1StreamData()))) {
+			byte[] expected = getTextFileData();
+			byte[] actual = new byte[expected.length];
+			is.read(actual);
+			assertEquals(expected, actual);
+			assertTrue(is.isCrcValid());
+		}
 	}
 
-	
 	private byte[] getTextFileLzw1StreamData() {
 		return new byte[] {
 				(byte)0xCA, 0x42, 0x00, (byte)0xDB, (byte)0xB7, 0x00, 0x01, 0x54, 
