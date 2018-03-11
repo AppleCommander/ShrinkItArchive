@@ -7,6 +7,8 @@ import java.util.GregorianCalendar;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.webcodepro.shrinkit.NuFileArchive;
+
 /**
  * Exercise the LittleEndianByteInputStream class.
  * @author robgreene@users.sourceforge.net
@@ -56,24 +58,22 @@ public class LittleEndianByteInputStreamTest {
 			}
 		}
 	}
-// 	This methods got removed at some point but nobody updated the unit tests. Bad developer!
-//	@Test
-//	public void testCheckNuFileId() throws IOException {
-//		LittleEndianByteInputStream bs = new LittleEndianByteInputStream(new byte[] { 0x4e, (byte)0xf5, 0x46, (byte)0xe9, 0x6c, (byte)0xe5 });
-//		Assert.assertTrue(NuFileArchive.bs.checkNuFileId());
-//		Assert.assertEquals(6, bs.getTotalBytesRead());
-//		bs = new LittleEndianByteInputStream("NotNuFile".getBytes());
-//		Assert.assertFalse(bs.checkNuFileId());
-//	}
-// 	This methods got removed at some point but nobody updated the unit tests. Bad developer!
-//	@Test
-//	public void testCheckNuFxId() throws IOException {
-//		LittleEndianByteInputStream bs = new LittleEndianByteInputStream(new byte[] { 0x4e, (byte)0xf5, 0x46, (byte)0xd8 });
-//		Assert.assertTrue(bs.checkNuFxId());
-//		Assert.assertEquals(4, bs.getTotalBytesRead());
-//		bs = new LittleEndianByteInputStream("NotNuFx".getBytes());
-//		Assert.assertFalse(bs.checkNuFxId());
-//	}
+	@Test
+	public void testCheckNuFileId() throws IOException {
+		try (LittleEndianByteInputStream bs = new LittleEndianByteInputStream(
+				new byte[] { 0x4e, (byte)0xf5, 0x46, (byte)0xe9, 0x6c, (byte)0xe5 })) {
+			Assert.assertEquals(NuFileArchive.NUFILE_ARCHIVE, bs.seekFileType(6));
+			Assert.assertEquals(6, bs.getTotalBytesRead());
+		}
+	}
+	@Test
+	public void testCheckNuFxId() throws IOException {
+		try (LittleEndianByteInputStream bs = new LittleEndianByteInputStream(
+				new byte[] { 0x4e, (byte)0xf5, 0x46, (byte)0xd8 })) {
+			Assert.assertEquals(NuFileArchive.NUFX_ARCHIVE, bs.seekFileType(4));
+			Assert.assertEquals(4, bs.getTotalBytesRead());
+		}
+	}
 	@Test
 	public void testReadWord() throws IOException {
 		try (LittleEndianByteInputStream bs = new LittleEndianByteInputStream(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 })) {

@@ -38,8 +38,9 @@ public class MasterHeaderBlock {
 			bs.readBytes(127 - ByteConstants.NUFILE_ID.length);
 			headerOffset = 128;
 			int count = bs.read();
-			if (count != 0)
+			if (count != 0) {
 				throw new IOException("This is actually a Binary II archive with multiple files in it."); // FIXME - NLS
+			}
 			fileType = bs.seekFileType();
 		}
 		if (!(fileType == NuFileArchive.NUFILE_ARCHIVE)) {

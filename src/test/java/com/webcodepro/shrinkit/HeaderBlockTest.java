@@ -148,6 +148,6 @@ public class HeaderBlockTest {
 		checkDate(new byte[] {0x00,0x11,0x11,0x5e,0x13,0x01,0x00,0x01}, b.getModWhen());
 		checkDate(new byte[] {0x38,0x0c,0x14,0x5f,0x08,0x07,0x00,0x04}, b.getArchiveWhen());
 		Assert.assertEquals(0x0000, b.getOptionSize());
-		Assert.assertNull(b.getRawFilename());
+		Assert.assertEquals("Unknown", b.getRawFilename());
 	}
 }

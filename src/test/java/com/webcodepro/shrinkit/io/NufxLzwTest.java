@@ -60,7 +60,7 @@ public class NufxLzwTest extends TestBase {
 		byte[] actual = null;
 		for (HeaderBlock header : headers) {
 			if (archiveFile.equals(header.getFilename())) {
-				ThreadRecord r = header.getDataForkInputStream();
+				ThreadRecord r = header.getDataForkThreadRecord();
 				long bytes = r.getThreadEof();
 				ByteArrayOutputStream buf = new ByteArrayOutputStream();
 				InputStream is = r.getInputStream();

@@ -46,8 +46,9 @@ public class HeaderBlock {
 	 */
 	public HeaderBlock(LittleEndianByteInputStream bs) throws IOException {
 		int type = bs.seekFileType(4);
-		if (type == 0)
+		if (type == 0) {
 			throw new IOException("Unable to decode this archive.");  // FIXME - NLS
+		}
 		headerCrc = bs.readWord();
 		attribCount = bs.readWord();
 		versionNumber = bs.readWord();
@@ -81,6 +82,9 @@ public class HeaderBlock {
 		int length = bs.readWord();
 		if (length > 0) {
 			rawFilename = new String(bs.readBytes(length));
+		}
+		if (rawFilename == null) {
+			rawFilename = "Unknown";
 		}
 	}
 	/**
@@ -128,15 +132,21 @@ public class HeaderBlock {
 	
 	/**
 	 * Get the data fork.
+	 * Note that this first searches the data fork and then searches for a disk image; 
+	 * this may not be correct behavior.
 	 */
-	public ThreadRecord getDataForkInputStream() throws IOException {
-		return  findThreadRecord(ThreadKind.DATA_FORK);
+	public ThreadRecord getDataForkThreadRecord() {
+		ThreadRecord thread = findThreadRecord(ThreadKind.DATA_FORK);
+		if (thread == null) {
+			thread = findThreadRecord(ThreadKind.DISK_IMAGE);
+		}
+		return thread;
 	}
 
 	/**
 	 * Get the resource fork.
 	 */
-	public ThreadRecord getResourceForkInputStream() throws IOException {
+	public ThreadRecord getResourceForkThreadRecord() {
 		return findThreadRecord(ThreadKind.RESOURCE_FORK);
 	}
 
@@ -148,6 +158,48 @@ public class HeaderBlock {
 			if (r.getThreadKind() == tk) return r;
 		}
 		return null;
+	}
+	
+	// HELPER METHODS
+	
+	/**
+	 * Helper method to determine the file system separator.
+	 * Due to some oddities, breaking apart by byte value...
+	 */
+	public String getFileSystemSeparator() {
+		switch (getFileSysInfo() & 0xff) {
+		case 0xaf:
+		case 0x2f:
+			return "/";
+		case 0x3a:
+		case 0xba:
+		case 0x3f:	// Note that $3F is per the documentation(!)
+			return ":";
+		case 0x5c:
+		case 0xdc:
+			return "\\";
+		default:
+			return "";
+		}
+	}
+	
+	public long getUncompressedSize() {
+		long size = 0;
+		for (ThreadRecord r : threads) {
+			if (r.getThreadClass() == ThreadClass.DATA) {
+				size+= r.getThreadEof();
+			}
+		}
+		return size;
+	}
+	public long getCompressedSize() {
+		long size = 0;
+		for (ThreadRecord r : threads) {
+			if (r.getThreadClass() == ThreadClass.DATA) {
+				size+= r.getCompThreadEof();
+			}
+		}
+		return size;
 	}
 
 	// GENERATED CODE

@@ -5,18 +5,27 @@ package com.webcodepro.shrinkit;
  * @author robgreene@users.sourceforge.net
  */
 public enum ThreadFormat {
-	UNCOMPRESSED(0x0000), HUFFMAN_SQUEEZE(0x0001), DYNAMIC_LZW1(0x0002), DYNAMIC_LZW2(0x0003), 
-	UNIX_12BIT_COMPRESS(0x0004), UNIX_16BIT_COMPRESS(0x0005);
+	UNCOMPRESSED(0x0000, "Uncompressed"), 
+	HUFFMAN_SQUEEZE(0x0001, "Huffman Squeeze"), 
+	DYNAMIC_LZW1(0x0002, "Dynamic LZW/1"), 
+	DYNAMIC_LZW2(0x0003, "Dynamic LZW/2"), 
+	UNIX_12BIT_COMPRESS(0x0004, "Unix 12-bit Compress"), 
+	UNIX_16BIT_COMPRESS(0x0005, "Unix 16-bit Compress");
 	
 	/** Associate the hex codes with the enum */
-	private int threadFormat;
+	private final int threadFormat;
+	private final String name;
 	
-	private ThreadFormat(int threadFormat) {
+	private ThreadFormat(int threadFormat, String name) {
 		this.threadFormat = threadFormat;
+		this.name = name;
 	}
 	
 	public int getThreadFormat() {
 		return threadFormat;
+	}
+	public String getName() {
+		return name;
 	}
 
 	/**
