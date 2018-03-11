@@ -1,12 +1,10 @@
 package com.webcodepro.shrinkit;
 
-import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
 /**
  * Scan through the directories in NufxScan.txt, looking for 
@@ -23,26 +21,36 @@ public class NufxScan {
 	private static long sizeOfSmallestCompressedFile;
 	
 	public static void main(String[] args) throws IOException {
-		BufferedReader r = new BufferedReader(new InputStreamReader(NufxScan.class.getResourceAsStream("NufxScan.txt")));
-		String line = r.readLine();
-		while (line != null) {
-			scanDirectory(line);
-			line = r.readLine();
+		for (String dir : args) {
+			scanDirectory(dir);
 		}
 	}
 	
 	private static void scanDirectory(String dirName) throws IOException {
 		File dir = new File(dirName);
-		if (!dir.isDirectory()) {
-			throw new IllegalArgumentException("'" + dirName + "' is not a directory");
+		scanDirectory(dir);
+	}
+	
+	private static void scanDirectory(File directory) throws IOException {
+		System.out.printf("Scanning '%s'...\n", directory.toString());
+		if (!directory.isDirectory()) {
+			throw new IllegalArgumentException("'" + directory.toString() + "' is not a directory");
 		}
-		File[] files = dir.listFiles(new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				return name.toLowerCase().endsWith(".shk") || name.toLowerCase().endsWith(".sdk");
+		File[] files = directory.listFiles(new FileFilter() {
+			public boolean accept(File file) {
+				boolean isSHK = file.getName().toLowerCase().endsWith(".shk");
+				boolean isSDK = file.getName().toLowerCase().endsWith(".sdk");
+				boolean isDirectory = file.isDirectory();
+				boolean keep = isSHK || isSDK || isDirectory;
+				return keep;
 			}
 		});
 		for (File file : files) {
-			display(file);
+			if (file.isDirectory()) {
+				scanDirectory(file);
+			} else {
+				displayArchive(file);
+			}
 		}
 		if (sizeOfSmallestCompressedFile != 0) {
 			System.out.printf("\n\nSmallest compressed file:\n");
@@ -52,7 +60,7 @@ public class NufxScan {
 		}
 	}
 	
-	private static void display(File archive) throws IOException {
+	private static void displayArchive(File archive) throws IOException {
 		System.out.printf("Details for %s\n\n", archive.getAbsoluteFile());
 		try (InputStream is = new FileInputStream(archive)) {
 			NuFileArchive a = new NuFileArchive(is);
