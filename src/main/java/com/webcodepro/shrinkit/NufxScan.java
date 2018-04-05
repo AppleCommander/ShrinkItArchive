@@ -21,8 +21,14 @@ public class NufxScan {
 	private static long sizeOfSmallestCompressedFile;
 	
 	public static void main(String[] args) throws IOException {
-		for (String dir : args) {
-			scanDirectory(dir);
+		if (args.length == 0) {
+			System.out.println("Scan NuFX/Shrinkit archives.  Please include at least one path name.");
+		} else if (args.length == 1 && "-v".equals(args[0])) {
+			System.out.printf("ShrinkIt Library version %s\n", NuFileArchive.VERSION);
+		} else {
+			for (String dir : args) {
+				scanDirectory(dir);
+			}
 		}
 	}
 	

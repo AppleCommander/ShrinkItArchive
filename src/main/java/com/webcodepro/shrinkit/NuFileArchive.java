@@ -13,6 +13,12 @@ import com.webcodepro.shrinkit.io.LittleEndianByteInputStream;
  * @author robgreene@users.sourceforge.net
  */
 public class NuFileArchive {
+	public static final String VERSION;
+	
+	static {
+		VERSION = NuFileArchive.class.getPackage().getImplementationVersion();
+	}	
+	
 	private MasterHeaderBlock master;
 	private List<HeaderBlock> headers;
 	private long totalSize = 0;

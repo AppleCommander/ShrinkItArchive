@@ -16,7 +16,9 @@ mainClassName = 'com.webcodepro.shrinkit.NufxScan'
 jar {
   manifest {
     attributes(
-      'Main-Class': mainClassName
+      'Main-Class': mainClassName,
+      'Implementation-Title': 'ShrinkItArchive',
+      'Implementation-Version': version
     )
   }
 }
