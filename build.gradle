@@ -23,6 +23,11 @@ jar {
   }
 }
 
+
+javadoc {
+    options.addStringOption('Xdoclint:none', '-quiet')
+}
+
 task javadocJar(type: Jar) {
     classifier = 'javadoc'
     from javadoc
@@ -38,6 +43,8 @@ artifacts {
 }
 
 signing {
+    // Only sign if we're uploading...
+    required { gradle.taskGraph.hasTask("uploadArchives") }
     sign configurations.archives
 }
 
