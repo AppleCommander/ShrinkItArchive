@@ -8,7 +8,7 @@ repositories {
 }
 
 dependencies {
-    testCompile 'junit:junit:4.12'         
+    testImplementation 'junit:junit:4.12'         
 }
 
 mainClassName = 'com.webcodepro.shrinkit.NufxScan' 
@@ -18,7 +18,7 @@ jar {
     attributes(
       'Main-Class': mainClassName,
       'Implementation-Title': 'ShrinkItArchive',
-      'Implementation-Version': version
+      'Implementation-Version': archiveVersion
     )
   }
 }
