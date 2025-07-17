@@ -3,6 +3,7 @@ plugins {
     id 'application'
     id 'maven-publish'
     id 'signing'
+    id 'org.graalvm.buildtools.native' version '0.10.6'
 }
 
 ext.isSnapshotVersion = version.endsWith("SNAPSHOT")
@@ -102,4 +103,14 @@ publishing {
 
 signing {
     sign publishing.publications.mavenJava
+}
+
+graalvmNative {
+    String osName = System.getProperty('os.name').toLowerCase().split()[0]
+    String osArch = System.getProperty('os.arch').toLowerCase().split()[0]
+    binaries {
+        named("main") {
+            imageName.set("NufxScan-${osName}-${osArch}-${project.version}")
+        }
+    }
 }
