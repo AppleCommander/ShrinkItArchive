@@ -35,6 +35,12 @@ public class NufxScan {
 	private static void scanDirectory(String dirName) throws IOException {
 		File dir = new File(dirName);
 		scanDirectory(dir);
+		if (sizeOfSmallestCompressedFile != 0) {
+			System.out.printf("\n\nSmallest compressed file:\n");
+			System.out.printf("Archive = %s\n", archiveWithSmallestCompressedFile.getAbsoluteFile());
+			System.out.printf("Filename = %s\n", smallestCompressedFilename);
+			System.out.printf("Size = %08x (%d)\n", sizeOfSmallestCompressedFile, sizeOfSmallestCompressedFile);
+		}
 	}
 	
 	private static void scanDirectory(File directory) throws IOException {
@@ -58,18 +64,18 @@ public class NufxScan {
 				displayArchive(file);
 			}
 		}
-		if (sizeOfSmallestCompressedFile != 0) {
-			System.out.printf("\n\nSmallest compressed file:\n");
-			System.out.printf("Archive = %s\n", archiveWithSmallestCompressedFile.getAbsoluteFile());
-			System.out.printf("Filename = %s\n", smallestCompressedFilename);
-			System.out.printf("Size = %08x (%d)\n", sizeOfSmallestCompressedFile, sizeOfSmallestCompressedFile);
-		}
 	}
 	
 	private static void displayArchive(File archive) throws IOException {
 		System.out.printf("Details for %s\n\n", archive.getAbsoluteFile());
 		try (InputStream is = new FileInputStream(archive)) {
-			NuFileArchive a = new NuFileArchive(is);
+			NuFileArchive a = null;
+			try {
+				a = new NuFileArchive(is);
+			} catch (Throwable t) {
+				System.out.printf("Error reading '%s': %s\n", archive.getAbsoluteFile(), t.getMessage());
+				return;
+			}
 			System.out.println("Ver# Threads  FSId FSIn Access   FileType ExtraTyp Stor Thread Formats..... OrigSize CompSize Filename");
 			System.out.println("==== ======== ==== ==== ======== ======== ======== ==== =================== ======== ======== ==============================");
 			for (HeaderBlock b : a.getHeaderBlocks()) {
