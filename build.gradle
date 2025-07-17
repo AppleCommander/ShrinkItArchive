@@ -1,10 +1,20 @@
-apply plugin: 'java'
-apply plugin: 'application'
-apply plugin: 'maven'
-apply plugin: 'signing'
+plugins {
+    id 'java'
+    id 'application'
+    id 'maven-publish'
+    id 'signing'
+}
+
+ext.isSnapshotVersion = version.endsWith("SNAPSHOT")
+ext.isReleaseVersion = !ext.isSnapshotVersion
+
+java {
+    sourceCompatibility = '11'
+    targetCompatibility = '11'
+}
 
 repositories {
-    jcenter()  
+    mavenCentral()
 }
 
 dependencies {
@@ -25,16 +35,18 @@ jar {
 
 
 javadoc {
+    title = "ShrinkItArchive ${project.version}"
+    source = sourceSets.main.allJava
     options.addStringOption('Xdoclint:none', '-quiet')
 }
 
-task javadocJar(type: Jar) {
-    classifier = 'javadoc'
+tasks.register('javadocJar', Jar) {
+    archiveClassifier = 'javadoc'
     from javadoc
 }
 
-task sourcesJar(type: Jar) {
-    classifier = 'sources'
+tasks.register('sourcesJar', Jar) {
+    archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }
 
@@ -42,49 +54,52 @@ artifacts {
     archives javadocJar, sourcesJar
 }
 
-signing {
-    // Only sign if we're uploading...
-    required { gradle.taskGraph.hasTask("uploadArchives") }
-    sign configurations.archives
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            pom {
+                groupId = "net.sf.applecommander"
+                artifactId = "ShrinkItArchive"
+                name = 'ShrinkItArchive'
+                description = 'A Java library for managing Apple II ShrinkIt archives.'
+                url = 'https://applecommander.github.io/'
+                licenses {
+                    license {
+                        name = 'The GNU General Public License (GPL) Version 2, June 1991'
+                        url = 'https://www.gnu.org/licenses/gpl-2.0.html'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'robgreene'
+                        name = 'Rob Greene'
+                        email = 'robgreene@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:https://github.com/AppleCommander/ShrinkItArchive.git'
+                    developerConnection = 'scm:git:git@github.com:AppleCommander/ShrinkItArchive.git'
+                    url = 'https://github.com/AppleCommander/applesingle'
+                }
+            }
+            repositories {
+                maven {
+                    def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+                    def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+                    url = isSnapshotVersion ? snapshotsRepoUrl : releasesRepoUrl
+                    credentials {
+                        username = findProperty('ossrhUsername')
+                        password = findProperty('ossrhPassword')
+                    }
+                }
+            }
+        }
+    }
 }
 
-uploadArchives {
-  repositories {
-    mavenDeployer {
-      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-        authentication(userName: findProperty('ossrhUsername'), password: findProperty('ossrhPassword'))
-      }
-
-      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-        authentication(userName: findProperty('ossrhUsername'), password: findProperty('ossrhPassword'))
-      }
-
-      pom.project {
-        name archivesBaseName
-        packaging 'jar'
-        description 'A Java library for managing Apple II ShrinkIt archives.'
-        url 'https://applecommander.github.io/'
-
-        scm {
-          url 'https://github.com/AppleCommander/ShrinkItArchive'
-        }
-
-        licenses {
-          license {
-            name 'The GNU General Public License (GPL) Version 2, June 1991'
-            url 'https://www.gnu.org/licenses/gpl-2.0.html'
-          }
-        }
-
-        developers {
-          developer {
-            id 'robgreene'
-            email 'robgreene@gmail.com'
-          }
-        }
-      }
-    }
-  }
+signing {
+    sign publishing.publications.mavenJava
 }
