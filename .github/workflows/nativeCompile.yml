@@ -43,7 +43,7 @@ jobs:
           GRADLE_OPTS: -Djava.io.tmpdir=${{ runner.temp }}
 
       - name: Upload binary
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: NufxScan-${{ matrix.os }}-${{ matrix.arch }}
           path: build/native/nativeCompile/NufxScan*
