@@ -19,15 +19,29 @@ public class NufxScan {
 	private static File archiveWithSmallestCompressedFile;
 	private static String smallestCompressedFilename;
 	private static long sizeOfSmallestCompressedFile;
+
+	private static boolean verify = false;
 	
 	public static void main(String[] args) throws IOException {
 		if (args.length == 0) {
+			System.out.println("Usage: nufxscan [ -v | --verify ] <path> ...");
+			System.out.println();
 			System.out.println("Scan NuFX/Shrinkit archives.  Please include at least one path name.");
+			System.out.println();
+			System.out.println("Options:");
+			System.out.println("  -v        Show version and exit.");
+			System.out.println("  --verify  Enable verify flag. Scan becomes quiet and only reports files that");
+			System.out.println("            the library cannot process. Helpful in identifying bugs.");
 		} else if (args.length == 1 && "-v".equals(args[0])) {
 			System.out.printf("ShrinkIt Library version %s\n", NuFileArchive.VERSION);
 		} else {
-			for (String dir : args) {
-				scanDirectory(dir);
+			for (String arg : args) {
+				if (arg.equals("--verify")) {
+					verify = true;
+				}
+				else {
+					scanDirectory(arg);
+				}
 			}
 		}
 	}
@@ -35,7 +49,7 @@ public class NufxScan {
 	private static void scanDirectory(String dirName) throws IOException {
 		File dir = new File(dirName);
 		scanDirectory(dir);
-		if (sizeOfSmallestCompressedFile != 0) {
+		if (!verify && sizeOfSmallestCompressedFile != 0) {
 			System.out.printf("\n\nSmallest compressed file:\n");
 			System.out.printf("Archive = %s\n", archiveWithSmallestCompressedFile.getAbsoluteFile());
 			System.out.printf("Filename = %s\n", smallestCompressedFilename);
@@ -44,7 +58,6 @@ public class NufxScan {
 	}
 	
 	private static void scanDirectory(File directory) throws IOException {
-		System.out.printf("Scanning '%s'...\n", directory.toString());
 		if (!directory.isDirectory()) {
 			throw new IllegalArgumentException("'" + directory.toString() + "' is not a directory");
 		}
@@ -53,15 +66,19 @@ public class NufxScan {
 				boolean isSHK = file.getName().toLowerCase().endsWith(".shk");
 				boolean isSDK = file.getName().toLowerCase().endsWith(".sdk");
 				boolean isDirectory = file.isDirectory();
-				boolean keep = isSHK || isSDK || isDirectory;
-				return keep;
+                return isSHK || isSDK || isDirectory;
 			}
 		});
 		for (File file : files) {
 			if (file.isDirectory()) {
 				scanDirectory(file);
 			} else {
-				displayArchive(file);
+				if (verify) {
+					verifyArchive(file);
+				}
+				else {
+					displayArchive(file);
+				}
 			}
 		}
 	}
@@ -115,6 +132,31 @@ public class NufxScan {
 				}
 			}
 			System.out.println();
+		}
+	}
+
+	private static void verifyArchive(File archive) throws IOException {
+		try (InputStream is = new FileInputStream(archive)) {
+			NuFileArchive a = null;
+			try {
+				a = new NuFileArchive(is);
+			} catch (Throwable t) {
+				System.out.printf("Error reading '%s': %s\n", archive.getAbsoluteFile(), t.getMessage());
+				return;
+			}
+			int entryNumber = 0;
+			for (HeaderBlock b : a.getHeaderBlocks()) {
+				entryNumber++;
+				for (ThreadRecord r : b.getThreadRecords()) {
+					try {
+						r.getInputStream().readNBytes((int)b.getUncompressedSize());
+					} catch (Throwable t) {
+						System.out.printf("Error reading entry %d (%s/%s/%s) in '%s': %s\n",
+								entryNumber, r.getThreadClass(), r.getThreadFormat(), r.getThreadKind(),
+								archive.getAbsoluteFile(), t.getMessage());
+					}
+				}
+			}
 		}
 	}
 }
