@@ -56,7 +56,7 @@ public class HeaderBlock {
 	private String filename;
 	private String rawFilename;
 	private long headerSize = 0;
-	private List<ThreadRecord> threads = new ArrayList<ThreadRecord>();
+	private List<ThreadRecord> threads = new ArrayList<>();
 	
 	/**
 	 * Create the Header Block.  This is done dynamically since
@@ -65,7 +65,7 @@ public class HeaderBlock {
 	public HeaderBlock(LittleEndianByteInputStream bs) throws IOException {
 		int type = bs.seekFileType(4);
 		if (type == 0) {
-			throw new IOException("Unable to decode this archive.");  // FIXME - NLS
+			throw new IOException("Unable to decode this archive.");
 		}
 		headerCrc = bs.readWord();
 		attribCount = bs.readWord();
@@ -170,7 +170,7 @@ public class HeaderBlock {
 	}
 
 	/**
-	 * Locate a ThreadRecord by it's ThreadKind.
+	 * Locate a ThreadRecord by its ThreadKind.
 	 */
 	protected ThreadRecord findThreadRecord(ThreadKind tk) {
 		for (ThreadRecord r : threads) {
@@ -186,20 +186,13 @@ public class HeaderBlock {
 	 * Due to some oddities, breaking apart by byte value...
 	 */
 	public String getFileSystemSeparator() {
-		switch (getFileSysInfo() & 0xff) {
-		case 0xaf:
-		case 0x2f:
-			return "/";
-		case 0x3a:
-		case 0xba:
-		case 0x3f:	// Note that $3F is per the documentation(!)
-			return ":";
-		case 0x5c:
-		case 0xdc:
-			return "\\";
-		default:
-			return "";
-		}
+        return switch (getFileSysInfo() & 0xff) {
+            case 0xaf, 0x2f -> "/";
+			// Note that $3F is per the documentation(!)
+            case 0x3a, 0xba, 0x3f -> ":";
+            case 0x5c, 0xdc -> "\\";
+            default -> "";
+        };
 	}
 	
 	public long getUncompressedSize() {
@@ -219,6 +212,24 @@ public class HeaderBlock {
 			}
 		}
 		return size;
+	}
+
+	public String getFileSysIdText() {
+		return switch (getFileSysInfo()) {
+			case 1 -> "ProDOS/SOS";
+			case 2 -> "DOS 3.3";
+			case 3 -> "DOS 3.2";
+			case 4 -> "Apple II Pascal";
+			case 5 -> "Macintosh HFS";
+			case 6 -> "Macintosh MFS";
+			case 7 -> "Lisa File System";
+			case 8 -> "Apple CP/M";
+			case 10 -> "MS-DOS";
+			case 11 -> "High Sierra";
+			case 12 -> "ISO 9660";
+			case 13 -> "AppleShare";
+			default -> "Reserved";
+		};
 	}
 
 	// GENERATED CODE

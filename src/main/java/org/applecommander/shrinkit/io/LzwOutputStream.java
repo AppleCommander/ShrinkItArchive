@@ -32,8 +32,8 @@ import org.applecommander.shrinkit.CRC16;
  * @author robgreene@users.sourceforge.net
  */
 public class LzwOutputStream extends OutputStream {
-	private BitOutputStream os;
-	private Map<ByteArray,Integer> dictionary = new HashMap<ByteArray,Integer>();
+	private final BitOutputStream os;
+	private final Map<ByteArray,Integer> dictionary = new HashMap<>();
 	private int[] w = new int[0];
 	private int nextCode = 0x101;
 	
@@ -42,11 +42,11 @@ public class LzwOutputStream extends OutputStream {
 	 *  
 	 * @author robgreene@users.sourceforge.net
 	 */
-	private class ByteArray {
+	private static class ByteArray {
 		/** Data being managed. */
-		private int[] data;
+		private final int[] data;
 		/** The computed hash code -- CRC-16 for lack of imagination. */
-		private int hashCode;
+		private final int hashCode;
 		
 		public ByteArray(int d) {
 			this(new int[] { d });
@@ -58,8 +58,10 @@ public class LzwOutputStream extends OutputStream {
 			hashCode = (int)crc.getValue();
 		}
 		public boolean equals(Object obj) {
-			ByteArray ba = (ByteArray)obj;
-			if (data.length != ba.data.length) return false;
+			if (!(obj instanceof ByteArray ba)) {
+				return false;
+			}
+            if (data.length != ba.data.length) return false;
 			for (int i=0; i<data.length; i++) {
 				if (data[i] != ba.data[i]) return false;
 			}

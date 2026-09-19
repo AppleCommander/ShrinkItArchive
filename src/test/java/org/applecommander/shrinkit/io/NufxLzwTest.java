@@ -69,7 +69,7 @@ public class NufxLzwTest extends TestBase {
 	}
 	
 	/**
-	 * Given details about an archive file and it's expected contents, locate that
+	 * Given details about an archive file, and its expected contents, locate that
 	 * file and then check it against the contents.
 	 */
 	protected void check(String archiveName, String archiveFile, String expectedContentFile) throws IOException {
@@ -91,12 +91,14 @@ public class NufxLzwTest extends TestBase {
 			}
 		}
 		InputStream is = getClass().getResourceAsStream(expectedContentFile);
+		assert is != null;
 		ByteArrayOutputStream buf = new ByteArrayOutputStream();
 		int b;
 		while ( (b = is.read()) != -1 ) {
 			buf.write(b);
 		}
 		byte[] expected = buf.toByteArray();
+		assert actual != null;
 		assertEquals(expected, actual);
 	}
 }

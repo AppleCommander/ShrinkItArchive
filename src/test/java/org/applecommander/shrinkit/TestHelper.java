@@ -29,8 +29,7 @@ public class TestHelper {
 	private TestHelper() {
 		// Prevent construction
 	}
-	
-	
+
 	public static void checkDate(byte[] streamData, Date actual) throws IOException {
 		try (LittleEndianByteInputStream is = new LittleEndianByteInputStream(streamData)) {
 			Assert.assertEquals(is.readDate(), actual);

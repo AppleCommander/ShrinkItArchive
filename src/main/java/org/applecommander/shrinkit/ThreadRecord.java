@@ -34,7 +34,7 @@ import org.applecommander.shrinkit.io.NufxLzw2InputStream;
  * <p>
  * Depending on the type of thread, the data may be text.  If so,
  * <code>isText</code> will return true and <code>getText</code>
- * will return the string. Otherwise the data should be read through
+ * will return the string. Otherwise, the data should be read through
  * one of the <code>InputStream</code> options.
  * 
  * @author robgreene@users.sourceforge.net
@@ -72,8 +72,7 @@ public class ThreadRecord {
 				/* supposed to be block size, but SHK v3.0.1 stored it wrong */
 				threadEof = hb.getExtraType() * 512;
 				// System.out.println("Found erroneous storage type... fixing.");
-			} else if (hb.getStorageType() == 256 &&
-					hb.getExtraType() == 280 &&
+			} else if (hb.getStorageType() == 256 && hb.getExtraType() == 280 &&
 					hb.getFileSysId() == 2 ) { // FileSysDOS33
 				/*
 				 * Fix for less-common ShrinkIt problem: looks like an old
@@ -122,16 +121,13 @@ public class ThreadRecord {
 	 * Get the appropriate input data stream for this thread to decompress the contents.
 	 */
 	public InputStream getInputStream() throws IOException {
-		switch (threadFormat) {
-		case UNCOMPRESSED:
-			return getRawInputStream();
-		case DYNAMIC_LZW1:
-			return new NufxLzw1InputStream(new LittleEndianByteInputStream(getRawInputStream()));
-		case DYNAMIC_LZW2:
-			return new NufxLzw2InputStream(new LittleEndianByteInputStream(getRawInputStream()));
-		default:
-			throw new IOException("The thread format " + threadFormat + " does not have an InputStream associated with it!");
-		}
+        return switch (threadFormat) {
+            case UNCOMPRESSED -> getRawInputStream();
+            case DYNAMIC_LZW1 -> new NufxLzw1InputStream(new LittleEndianByteInputStream(getRawInputStream()));
+            case DYNAMIC_LZW2 -> new NufxLzw2InputStream(new LittleEndianByteInputStream(getRawInputStream()));
+            default -> throw new IOException("The thread format " + threadFormat
+					+ " does not have an InputStream associated with it!");
+        };
 	}
 	
 	// GENERATED CODE

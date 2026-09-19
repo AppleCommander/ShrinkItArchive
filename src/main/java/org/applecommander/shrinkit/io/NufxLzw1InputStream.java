@@ -23,49 +23,33 @@ import java.io.InputStream;
 
 import org.applecommander.shrinkit.CRC16;
 
-/**
- * The <code>NufxLzw1InputStream</code> reads a data fork or
- * resource fork written in the NuFX LZW/1 format.
- * <p>
- * The layout of the LZW/1 data is as follows:
- * <table border="0">
- * <tr>
- *   <th colspan="3">"Fork" Header</th>
- * </tr><tr>
- *   <td>+0</td>
- *   <td>Word</td>
- *   <td>CRC-16 of the uncompressed data within the thread</td>
- * </tr><tr>
- *   <td>+2</td>
- *   <td>Byte</td>
- *   <td>Low-level volume number use to format 5.25" disks</td>
- * </tr><tr>
- *   <td>+3</td>
- *   <td>Byte</td>
- *   <td>RLE character used to decode this thread</td>
- * </tr><tr>
- *   <th colspan="3">Each subsequent 4K chunk of data</th>
- * </tr><tr>
- *   <td>+0</td>
- *   <td>Word</td>
- *   <td>Length after RLE compression (if RLE is not used, length 
- *       will be 4096</td>
- * </tr><tr>
- *   <td>+2</td>
- *   <td>Byte</td>
- *   <td>A $01 indicates LZW applied to this chunk; $00 that LZW
- *       <b>was not</b> applied to this chunk</td>
- * </tr>
- * <table>
- * <p>
- * Note that the LZW string table is <em>cleared</em> after
- * every chunk.
- *  
- * @author robgreene@users.sourceforge.net
- */
+/// The `NufxLzw1InputStream` reads a data fork or
+/// resource fork written in the NuFX LZW/1 format.
+///
+/// The layout of the LZW/1 data is as follows:
+///
+/// * "Fork" Header
+///
+///   | Offset | Size | Description |
+///   | :--- | :--- | :--- |
+///   | +0 | Word | CRC-16 of the uncompressed data within the thread. |
+///   | +2 | Byte | Low-level volume number use to format 5.25" disks. |
+///   | +3 | Byte | RLE character used to decode this thread. |
+///
+/// * Each subsequent 4K chunk of data:
+///
+///   | Offset | Size | Description |
+///   | :--- | :--- | :--- |
+///   | +0 | Word | Length after RLE compression (if RLE is not used, length will be 4096). |
+///   | +2 | Byte | A `$01` indicates LZW applied to this chunk; `$00` that LZW *was not* applied to this chunk. |
+///
+/// Note that the LZW string table is _cleared_ after
+/// every chunk.
+///
+/// @author robgreene@users.sourceforge.net
 public class NufxLzw1InputStream extends InputStream {
 	/** This is the raw data stream with all markers and compressed data. */
-	private LittleEndianByteInputStream dataStream;
+	private final LittleEndianByteInputStream dataStream;
 	/** Used for an LZW-only <code>InputStream</code>. */
 	private LzwInputStream lzwStream;
 	/** Used for an RLE-only <code>InputStream</code>. */
@@ -83,7 +67,7 @@ public class NufxLzw1InputStream extends InputStream {
 	/** This is the RLE character to use. */
 	private int rleCharacter;
 	/** Used to track the CRC of data we've extracted */
-	private CRC16 dataCrc = new CRC16();
+	private final CRC16 dataCrc = new CRC16();
 	
 	/**
 	 * Create the LZW/1 input stream.

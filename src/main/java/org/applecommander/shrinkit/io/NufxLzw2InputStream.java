@@ -23,46 +23,33 @@ import java.io.InputStream;
 
 import org.applecommander.shrinkit.CRC16;
 
-/**
- * The <code>NufxLzw2InputStream</code> reads a data fork or
- * resource fork written in the NuFX LZW/2 format.
- * <p>
- * The layout of the LZW/2 data is as follows:
- * <table border="0">
- * <tr>
- *   <th colspan="3">"Fork" Header</th>
- * </tr><tr>
- *   <td>+0</td>
- *   <td>Byte</td>
- *   <td>Low-level volume number used to format 5.25" disks</td>
- * </tr><tr>
- *   <td>+1</td>
- *   <td>Byte</td>
- *   <td>RLE character used to decode this thread</td>
- * </tr><tr>
- *   <th colspan="3">Each subsequent 4K chunk of data</th>
- * </tr><tr>
- *   <td>+0</td>
- *   <td>Word</td>
- *   <td>Bits 0-12: Length after RLE compression<br/>
- *       Bit 15: LZW flag (set to 1 if LZW used)</td>
- * </tr><tr>
- *   <td>+2</td>
- *   <td>Word</td>
- *   <td>If LZW flag = 1, total bytes in chunk<br/>
- *       Else (flag = 0) start of data</td>
- * </tr>
- * <table>
- * <p>
- * The LZW/2 dictionary is only cleared when the table becomes full and is indicated
- * in the input stream by 0x100.  It is also cleared whenever a chunk that is not
- * LZW encoded is encountered.
- *  
- * @author robgreene@users.sourceforge.net
- */
+/// The `NufxLzw2InputStream` reads a data fork or
+/// resource fork written in the NuFX LZW/2 format.
+///
+/// The layout of the LZW/2 data is as follows:
+///
+/// * "Fork" Header:
+///
+///   | Offset | Size | Description |
+///   | :--- | :--- | :--- |
+///   | +0 | Byte | Low-level volume number used to format 5.25" disks. |
+///   | +1 | Byte | RLE character used to decode this thread. |
+///
+/// * Each subsequent 4K chunk of data:
+///
+///   | Offset | Size | Description |
+///   | :--- | :--- | :--- |
+///   | +0 | Word | Bits 0-12: Length after RLE compression.<br/>Bit 15: LZW flag (set to 1 if LZW used). |
+///   | +2 | Word | If LZW flag = 1, total bytes in chunk.<br/>Else (flag = 0) start of data. |
+///
+/// The LZW/2 dictionary is only cleared when the table becomes full and is indicated
+/// in the input stream by `0x100`.  It is also cleared whenever a chunk that is not
+/// LZW encoded is encountered.
+///
+/// @author robgreene@users.sourceforge.net
 public class NufxLzw2InputStream extends InputStream {
 	/** This is the raw data stream with all markers and compressed data. */
-	private LittleEndianByteInputStream dataStream;
+	private final LittleEndianByteInputStream dataStream;
 	/** Used for an LZW-only <code>InputStream</code>. */
 	private LzwInputStream lzwStream;
 	/** Used for an RLE-only <code>InputStream</code>. */
@@ -78,7 +65,7 @@ public class NufxLzw2InputStream extends InputStream {
 	/** This is the RLE character to use. */
 	private int rleCharacter;
 	/** Used to track the CRC of data we've extracted */
-	private CRC16 dataCrc = new CRC16();
+	private final CRC16 dataCrc = new CRC16();
 	
 	/**
 	 * Create the LZW/2 input stream.

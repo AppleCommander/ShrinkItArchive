@@ -65,7 +65,7 @@ jobs:
     strategy:
       matrix:
         # See: https://docs.github.com/en/actions/concepts/runners/about-github-hosted-runners#overview-of-github-hosted-runners
-        # ... and follow the links to the related Github repositories
+        # ... and follow the links to the related GitHub repositories
         include:
           - label: ubuntu-latest
             os: linux

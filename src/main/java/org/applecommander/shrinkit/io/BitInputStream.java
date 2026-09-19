@@ -21,20 +21,18 @@ package org.applecommander.shrinkit.io;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * The BitInputStream allows varying bit sizes to be pulled out of the
- * wrapped InputStream.  This is useful for LZW type compression algorithms
- * where 9-12 bit codes are used instead of the 8-bit byte.
- * <p>
- * Warning: The <code>read(byte[])</code> and <code>read(byte[], int, int)</code>
- * methods of <code>InputStream</code> will not work appropriately with any
- * bit size &gt; 8 bits. 
- *  
- * @author robgreene@users.sourceforge.net
- */
+/// The BitInputStream allows varying bit sizes to be pulled out of the
+/// wrapped InputStream.  This is useful for LZW type compression algorithms
+/// where 9-12 bit codes are used instead of the 8-bit byte.
+///
+/// Warning: The `read(byte[])` and `read(byte[], int, int)`
+/// methods of `InputStream` will not work appropriately with any
+/// bit size > 8 bits.
+///
+/// @author robgreene@users.sourceforge.net
 public class BitInputStream extends InputStream implements BitConstants {
     /** Our source of data. */
-    private InputStream is;
+    private final InputStream is;
     /** The number of bits to read for a request.  This can be adjusted dynamically. */
     private int requestedNumberOfBits; 
     /** The current bit mask to use when returning a <code>read()</code> request. */ 

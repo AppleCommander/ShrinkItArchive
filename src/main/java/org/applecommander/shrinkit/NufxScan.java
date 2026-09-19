@@ -19,7 +19,6 @@
 package org.applecommander.shrinkit;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,16 +39,18 @@ public class NufxScan {
 
 	private static boolean verify = false;
 	
-	public static void main(String[] args) throws IOException {
+	static void main(String[] args) throws IOException {
 		if (args.length == 0) {
-			System.out.println("Usage: nufxscan [ -v | --verify ] <path> ...");
-			System.out.println();
-			System.out.println("Scan NuFX/Shrinkit archives.  Please include at least one path name.");
-			System.out.println();
-			System.out.println("Options:");
-			System.out.println("  -v        Show version and exit.");
-			System.out.println("  --verify  Enable verify flag. Scan becomes quiet and only reports files that");
-			System.out.println("            the library cannot process. Helpful in identifying bugs.");
+			System.out.println("""
+					Usage: nufxscan [ -v | --verify ] <path> ...
+					
+					Scan NuFX/Shrinkit archives.  Please include at least one path name.
+					
+					Options:
+					  -v        Show version and exit.
+					  --verify  Enable verify flag. Scan becomes quiet and only reports files that
+					            the library cannot process. Helpful in identifying bugs.
+					""");
 		} else if (args.length == 1 && "-v".equals(args[0])) {
 			System.out.printf("ShrinkIt Library version %s\n", NuFileArchive.VERSION);
 		} else {
@@ -77,25 +78,27 @@ public class NufxScan {
 	
 	private static void scanDirectory(File directory) throws IOException {
 		if (!directory.isDirectory()) {
-			throw new IllegalArgumentException("'" + directory.toString() + "' is not a directory");
+			throw new IllegalArgumentException("'" + directory + "' is not a directory");
 		}
-		File[] files = directory.listFiles(new FileFilter() {
-			public boolean accept(File file) {
-				boolean isSHK = file.getName().toLowerCase().endsWith(".shk");
-				boolean isSDK = file.getName().toLowerCase().endsWith(".sdk");
-				boolean isDirectory = file.isDirectory();
-                return isSHK || isSDK || isDirectory;
-			}
-		});
-		for (File file : files) {
-			if (file.isDirectory()) {
-				scanDirectory(file);
-			} else {
-				if (verify) {
-					verifyArchive(file);
-				}
-				else {
-					displayArchive(file);
+		File[] files = directory.listFiles(file -> {
+            boolean isSHK = file.getName().toLowerCase().endsWith(".shk");
+            boolean isSDK = file.getName().toLowerCase().endsWith(".sdk");
+            boolean isDirectory = file.isDirectory();
+			return isSHK || isSDK || isDirectory;
+        });
+		if (files == null) {
+			System.out.println("No ShrinkIt archives found.");
+		}
+		else {
+			for (File file : files) {
+				if (file.isDirectory()) {
+					scanDirectory(file);
+				} else {
+					if (verify) {
+						verifyArchive(file);
+					} else {
+						displayArchive(file);
+					}
 				}
 			}
 		}
@@ -104,7 +107,7 @@ public class NufxScan {
 	private static void displayArchive(File archive) throws IOException {
 		System.out.printf("Details for %s\n\n", archive.getAbsoluteFile());
 		try (InputStream is = new FileInputStream(archive)) {
-			NuFileArchive a = null;
+			NuFileArchive a;
 			try {
 				a = new NuFileArchive(is);
 			} catch (Throwable t) {
@@ -139,7 +142,7 @@ public class NufxScan {
 					threadsPrinted++;
 				}
 				System.out.printf("%08x %08x ", origSize, compSize);
-				if (filename == null || filename.length() == 0) {
+				if (filename == null || filename.isEmpty()) {
 					filename = "<Unknown>";
 				}
 				System.out.println(filename);
@@ -155,7 +158,7 @@ public class NufxScan {
 
 	private static void verifyArchive(File archive) throws IOException {
 		try (InputStream is = new FileInputStream(archive)) {
-			NuFileArchive a = null;
+			NuFileArchive a;
 			try {
 				a = new NuFileArchive(is);
 			} catch (Throwable t) {

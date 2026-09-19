@@ -31,8 +31,8 @@ import java.io.InputStream;
  * @author robgreene@users.sourceforge.net
  */
 public class RleInputStream extends InputStream {
-	private InputStream bs;
-	private int escapeChar;
+	private final InputStream bs;
+	private final int escapeChar;
 	private int repeatedByte;
 	private int numBytes = -1;
 	
@@ -66,5 +66,4 @@ public class RleInputStream extends InputStream {
 		numBytes--;
 		return repeatedByte;
 	}
-
 }

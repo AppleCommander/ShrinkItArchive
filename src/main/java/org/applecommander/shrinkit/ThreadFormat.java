@@ -34,7 +34,7 @@ public enum ThreadFormat {
 	private final int threadFormat;
 	private final String name;
 	
-	private ThreadFormat(int threadFormat, String name) {
+	ThreadFormat(int threadFormat, String name) {
 		this.threadFormat = threadFormat;
 		this.name = name;
 	}

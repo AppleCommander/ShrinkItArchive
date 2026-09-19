@@ -38,7 +38,7 @@ import org.applecommander.shrinkit.io.LittleEndianByteInputStream;
 public class MasterHeaderBlock {
 	private static final int MASTER_HEADER_LENGTH = 48;
 	private int masterCrc;
-	private boolean validCrc;
+	private final boolean validCrc;
 	private long totalRecords;
 	private Date archiveCreateWhen;
 	private Date archiveModWhen;
@@ -57,12 +57,12 @@ public class MasterHeaderBlock {
 			headerOffset = 128;
 			int count = bs.read();
 			if (count != 0) {
-				throw new IOException("This is actually a Binary II archive with multiple files in it."); // FIXME - NLS
+				throw new IOException("This is actually a Binary II archive with multiple files in it.");
 			}
 			fileType = bs.seekFileType();
 		}
 		if (!(fileType == NuFileArchive.NUFILE_ARCHIVE)) {
-			throw new IOException("Unable to decode this archive."); // FIXME - NLS
+			throw new IOException("Unable to decode this archive.");
 		}
 		masterCrc = bs.readWord();
 		bs.resetCrc();	// CRC is computed from this point to the end of the header

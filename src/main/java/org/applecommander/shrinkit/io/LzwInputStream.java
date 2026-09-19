@@ -25,29 +25,24 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-/**
- * This is the generic Shrinkit LZW decompression algorithm.
- * It does not deal with the vagaries of the LZW/1 and LZW/2 data streams.
- * It does, however, deal with dictionary clears (0x100) and the 
- * <code>BitInputStream</code> bit sizes.
- *  
- * @author robgreene@users.sourceforge.net
- */
+/// This is the generic Shrinkit LZW decompression algorithm.
+/// It does not deal with the vagaries of the LZW/1 and LZW/2 data streams.
+/// It does, however, deal with dictionary clears (`0x100`) and the
+/// `BitInputStream` bit sizes.
+///
+/// @author robgreene@users.sourceforge.net
 public class LzwInputStream extends InputStream {
-	private BitInputStream is;
+	private final BitInputStream is;
 	private List<int[]> dictionary;
-	private Queue<Integer> outputBuffer = new ConcurrentLinkedQueue<Integer>();
+	private final Queue<Integer> outputBuffer = new ConcurrentLinkedQueue<>();
 	private boolean newBuffer = true;
 	// See Wikipedia entry on LZW for variable naming
 	private int k;
 	private int[] w;
 	private int[] entry;
 	
-	/**
-	 * Create the <code>LzwInputStream</code> based on the given
-	 * <code>BitInputStream</code>.
-	 * @see BitInputStream
-	 */
+	/// Create the `LzwInputStream` based on the given `BitInputStream`.
+	/// @see BitInputStream
 	public LzwInputStream(BitInputStream is) {
 		this.is = is;
 	}
@@ -72,7 +67,7 @@ public class LzwInputStream extends InputStream {
 		if (dictionary == null) {
 			is.setRequestedNumberOfBits(9);
 			// Setup default dictionary for all bytes
-			dictionary = new ArrayList<int[]>();
+			dictionary = new ArrayList<>();
 			for (short i=0; i<256; i++) dictionary.add(new int[] { i });
 			dictionary.add(new int[] { 0x100 });	// 0x100 not used by NuFX
 		}
@@ -111,7 +106,6 @@ public class LzwInputStream extends InputStream {
 			throw new IOException("Invalid code of <" + k + "> encountered");
 		}
 		for (int i : entry) outputBuffer.add(i);
-		//int[] newEntry = Arrays.copyOf(w, w.length+1);
 		int[] newEntry = new int[w.length+1];
 		System.arraycopy(w, 0, newEntry, 0, w.length);
 		newEntry[w.length] = entry[0];

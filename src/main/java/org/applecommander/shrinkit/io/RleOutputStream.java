@@ -31,8 +31,8 @@ import java.io.OutputStream;
  * @author robgreene@users.sourceforge.net
  */
 public class RleOutputStream extends OutputStream {
-	private OutputStream os;
-	private int escapeChar;
+	private final OutputStream os;
+	private final int escapeChar;
 	private int repeatedByte;
 	private int numBytes = -1;
 	
@@ -71,7 +71,7 @@ public class RleOutputStream extends OutputStream {
 	
 	/**
 	 * Flush out any remaining data.
-	 * If we only have 1 byte and it is <em>not</em> the repeated
+	 * If we only have 1 byte, and it is <em>not</em> the repeated
 	 * byte, we can just dump that byte.  Otherwise, we need to
 	 * write out the escape character, the repeated byte, and
 	 * the number of bytes. 

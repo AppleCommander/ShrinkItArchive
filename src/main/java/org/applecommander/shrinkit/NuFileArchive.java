@@ -37,12 +37,12 @@ public class NuFileArchive {
 		VERSION = NuFileArchive.class.getPackage().getImplementationVersion();
 	}	
 	
-	private MasterHeaderBlock master;
-	private List<HeaderBlock> headers;
+	private final MasterHeaderBlock master;
+	private final List<HeaderBlock> headers;
 	private long totalSize = 0;
 
 	/**
-	 * Need to enumerate some basic sub-types of archives.
+	 * Need to enumerate some basic subtypes of archives.
 	 */
 	public static final int NUFILE_ARCHIVE = 1;
 	public static final int NUFX_ARCHIVE = 2;
@@ -54,7 +54,7 @@ public class NuFileArchive {
 	public NuFileArchive(InputStream inputStream) throws IOException {
 		LittleEndianByteInputStream bs = new LittleEndianByteInputStream(inputStream);
 		master = new MasterHeaderBlock(bs);
-		headers = new ArrayList<HeaderBlock>();
+		headers = new ArrayList<>();
 		for (int i=0; i<master.getTotalRecords(); i++) {
 			HeaderBlock header = new HeaderBlock(bs);
 			header.readThreads(bs);

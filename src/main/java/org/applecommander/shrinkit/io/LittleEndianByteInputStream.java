@@ -33,9 +33,9 @@ import org.applecommander.shrinkit.NuFileArchive;
  * @author robgreene@users.sourceforge.net
  */
 public class LittleEndianByteInputStream extends InputStream implements ByteConstants {
-	private InputStream inputStream;
+	private final InputStream inputStream;
 	private long bytesRead = 0;
-	private CRC16 crc = new CRC16();
+	private final CRC16 crc = new CRC16();
 
 	/**
 	 * Construct a LittleEndianByteInputStream from an InputStream.
@@ -150,7 +150,7 @@ public class LittleEndianByteInputStream extends InputStream implements ByteCons
 		long b = readByte();
 		long c = readByte();
 		long d = readByte();
-		return (long)(a | b<<8 | c<<16 | d<<24);
+		return a | b<<8 | c<<16 | d<<24;
 	}
 	/**
 	 * Read the TimeRec into a Java Date object.

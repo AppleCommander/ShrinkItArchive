@@ -33,9 +33,9 @@ import org.applecommander.shrinkit.CRC16;
  * @author robgreene@users.sourceforge.net
  */
 public class LittleEndianByteOutputStream extends OutputStream implements ByteConstants {
-	private OutputStream outputStream;
+	private final OutputStream outputStream;
 	private long bytesWritten = 0;
-	private CRC16 crc = new CRC16();
+	private final CRC16 crc = new CRC16();
 
 	/**
 	 * Construct a LittleEndianByteOutputStream from an OutputStream.
@@ -50,6 +50,7 @@ public class LittleEndianByteOutputStream extends OutputStream implements ByteCo
 	public void write(int b) throws IOException {
 		outputStream.write(b);
 		crc.update(b);
+		bytesWritten++;
 	}
 
 	/**
@@ -86,7 +87,7 @@ public class LittleEndianByteOutputStream extends OutputStream implements ByteCo
 	 * @see <a href="http://www.nulib.com/library/nufx-addendum.htm">NuFX addendum</a>
 	 */
 	public void writeDate(Date date) throws IOException {
-		byte[] data = null;
+		byte[] data;
 		if (date == null) {
 			data = TIMEREC_NULL;
 		} else {

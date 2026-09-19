@@ -35,7 +35,7 @@ public class NufxLzw1Test extends TestBase {
 		try (NufxLzw1InputStream is = new NufxLzw1InputStream(new LittleEndianByteInputStream(getTextFileLzw1StreamData()))) {
 			byte[] expected = getTextFileData();
 			byte[] actual = new byte[expected.length];
-			is.read(actual);
+			int _ = is.read(actual);
 			assertEquals(expected, actual);
 			assertTrue(is.isCrcValid());
 		}
