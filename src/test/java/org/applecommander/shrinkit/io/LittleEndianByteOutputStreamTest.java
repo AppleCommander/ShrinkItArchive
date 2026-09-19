@@ -18,12 +18,12 @@
  */
 package org.applecommander.shrinkit.io;
 
+import org.junit.Test;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-
-import org.junit.Test;
 
 /**
  * Exercise the LittleEndianByteOutputStream class.

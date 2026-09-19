@@ -18,14 +18,13 @@
  */
 package org.applecommander.shrinkit.io;
 
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
+import org.applecommander.shrinkit.NuFileArchive;
 import org.junit.Assert;
 import org.junit.Test;
 
-import org.applecommander.shrinkit.NuFileArchive;
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 /**
  * Exercise the LittleEndianByteInputStream class.

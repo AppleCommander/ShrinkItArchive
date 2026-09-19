@@ -18,12 +18,11 @@
  */
 package org.applecommander.shrinkit;
 
-import java.io.IOException;
-
+import org.applecommander.shrinkit.io.LittleEndianByteInputStream;
 import org.junit.Assert;
 import org.junit.Test;
 
-import org.applecommander.shrinkit.io.LittleEndianByteInputStream;
+import java.io.IOException;
 
 /**
  * Exercise the Thread Record.

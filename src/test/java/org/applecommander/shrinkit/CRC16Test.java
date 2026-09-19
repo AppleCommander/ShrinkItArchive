@@ -18,11 +18,11 @@
  */
 package org.applecommander.shrinkit;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 public class CRC16Test {
 	@Test

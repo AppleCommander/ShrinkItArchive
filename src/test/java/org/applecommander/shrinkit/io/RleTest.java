@@ -18,13 +18,9 @@
  */
 package org.applecommander.shrinkit.io;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import org.junit.Test;
+
+import java.io.*;
 
 /**
  * Exercise the RLE encoder and decoders.  

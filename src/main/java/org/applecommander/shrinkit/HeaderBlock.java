@@ -18,13 +18,13 @@
  */
 package org.applecommander.shrinkit;
 
+import org.applecommander.shrinkit.io.LittleEndianByteInputStream;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
-import org.applecommander.shrinkit.io.LittleEndianByteInputStream;
 
 /**
  * The Header Block contains information and content

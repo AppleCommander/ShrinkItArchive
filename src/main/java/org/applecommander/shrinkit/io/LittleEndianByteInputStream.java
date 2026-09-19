@@ -18,15 +18,15 @@
  */
 package org.applecommander.shrinkit.io;
 
+import org.applecommander.shrinkit.CRC16;
+import org.applecommander.shrinkit.NuFileArchive;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
-import org.applecommander.shrinkit.CRC16;
-import org.applecommander.shrinkit.NuFileArchive;
 
 /**
  * A simple class to hide the source of byte data.

@@ -18,14 +18,13 @@
  */
 package org.applecommander.shrinkit;
 
-import static org.applecommander.shrinkit.TestHelper.checkDate;
-
-import java.io.IOException;
-
+import org.applecommander.shrinkit.io.LittleEndianByteInputStream;
 import org.junit.Assert;
 import org.junit.Test;
 
-import org.applecommander.shrinkit.io.LittleEndianByteInputStream;
+import java.io.IOException;
+
+import static org.applecommander.shrinkit.TestHelper.checkDate;
 
 /**
  * Exercise the Master Header Block.

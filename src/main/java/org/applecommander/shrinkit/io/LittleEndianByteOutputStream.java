@@ -18,13 +18,13 @@
  */
 package org.applecommander.shrinkit.io;
 
+import org.applecommander.shrinkit.CRC16;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
-import org.applecommander.shrinkit.CRC16;
 
 /**
  * An OutputStream with helper methods to write little endian numbers

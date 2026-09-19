@@ -18,17 +18,16 @@
  */
 package org.applecommander.shrinkit.io;
 
+import org.applecommander.shrinkit.HeaderBlock;
+import org.applecommander.shrinkit.NuFileArchive;
+import org.applecommander.shrinkit.ThreadRecord;
+import org.junit.Test;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
-
-import org.junit.Test;
-
-import org.applecommander.shrinkit.HeaderBlock;
-import org.applecommander.shrinkit.NuFileArchive;
-import org.applecommander.shrinkit.ThreadRecord;
 
 /**
  * Compare actual decompressed content against the expected content.

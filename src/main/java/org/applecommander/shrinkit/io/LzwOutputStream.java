@@ -18,12 +18,12 @@
  */
 package org.applecommander.shrinkit.io;
 
+import org.applecommander.shrinkit.CRC16;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.applecommander.shrinkit.CRC16;
 
 /**
  * This is the generic Shrinkit LZW compression algorithm.

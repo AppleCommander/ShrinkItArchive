@@ -18,9 +18,8 @@
  */
 package org.applecommander.shrinkit.io;
 
-import org.junit.Assert;
-
 import junit.framework.AssertionFailedError;
+import org.junit.Assert;
 
 /**
  * Some common testing methods.

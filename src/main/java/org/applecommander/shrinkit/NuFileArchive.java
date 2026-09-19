@@ -18,12 +18,12 @@
  */
 package org.applecommander.shrinkit;
 
+import org.applecommander.shrinkit.io.LittleEndianByteInputStream;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.applecommander.shrinkit.io.LittleEndianByteInputStream;
 
 /**
  * Basic reading of a NuFX archive.

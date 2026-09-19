@@ -18,11 +18,11 @@
  */
 package org.applecommander.shrinkit;
 
-import java.io.IOException;
-import java.util.Date;
-
 import org.applecommander.shrinkit.io.ByteConstants;
 import org.applecommander.shrinkit.io.LittleEndianByteInputStream;
+
+import java.io.IOException;
+import java.util.Date;
 
 /**
  * The Master Header Block contains information about the entire

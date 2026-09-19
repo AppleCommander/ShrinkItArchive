@@ -18,10 +18,10 @@
  */
 package org.applecommander.shrinkit.io;
 
+import org.applecommander.shrinkit.CRC16;
+
 import java.io.IOException;
 import java.io.InputStream;
-
-import org.applecommander.shrinkit.CRC16;
 
 /// The `NufxLzw2InputStream` reads a data fork or
 /// resource fork written in the NuFX LZW/2 format.

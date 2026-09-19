@@ -18,13 +18,13 @@
  */
 package org.applecommander.shrinkit;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.applecommander.shrinkit.io.LittleEndianByteInputStream;
 import org.applecommander.shrinkit.io.NufxLzw1InputStream;
 import org.applecommander.shrinkit.io.NufxLzw2InputStream;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * This represents a single thread from the Shrinkit archive.

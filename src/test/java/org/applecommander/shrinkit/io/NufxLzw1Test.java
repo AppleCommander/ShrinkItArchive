@@ -18,11 +18,11 @@
  */
 package org.applecommander.shrinkit.io;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 import java.io.IOException;
 
-import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test some LZW/1 format streams.

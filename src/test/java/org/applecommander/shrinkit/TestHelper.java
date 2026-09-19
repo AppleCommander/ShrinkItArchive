@@ -18,12 +18,11 @@
  */
 package org.applecommander.shrinkit;
 
-import java.io.IOException;
-import java.util.Date;
-
+import org.applecommander.shrinkit.io.LittleEndianByteInputStream;
 import org.junit.Assert;
 
-import org.applecommander.shrinkit.io.LittleEndianByteInputStream;
+import java.io.IOException;
+import java.util.Date;
 
 public class TestHelper {
 	private TestHelper() {

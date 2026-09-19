@@ -18,10 +18,10 @@
  */
 package org.applecommander.shrinkit.io;
 
+import org.junit.Test;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
-import org.junit.Test;
 
 /**
  * Exercise the BitOutputStream.  
