@@ -132,24 +132,22 @@ public class HeaderBlock {
 			Optional<ThreadRecord> opt = findThreadRecord(ThreadKind.FILENAME);
             opt.ifPresent(threadRecord -> filename = threadRecord.getText());
 			if (filename == null) filename = rawFilename;
-			if (filename.contains(":")) {
-				filename = filename.replace(":","/");
-			}
 		}
 		return filename;
 	}
-	
+
 	/**
 	 * Final element in the path, in those cases where a filename actually holds a path name
 	 */
 	public String getFinalFilename() {
 		String filename = getFilename();
-		String[] path;
-		path = filename.split("/");
-		filename = path[path.length - 1];
+		if (getFileSystemSeparator() != null && !getFileSystemSeparator().isBlank()) {
+			String[] path = filename.split(getFileSystemSeparator());
+			filename = path[path.length - 1];
+		}
 		return filename;
 	}
-	
+
 	/**
 	 * Get the data fork.
 	 * Note that this first searches the data fork and then searches for a disk image; 
