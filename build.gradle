@@ -23,7 +23,7 @@ dependencies {
 }
 
 application {
-    mainClass = 'com.webcodepro.shrinkit.NufxScan'
+    mainClass = 'org.applecommander.shrinkit.NufxScan'
 }
 
 jar {
@@ -65,7 +65,7 @@ publishing {
             artifact sourcesJar
             artifact javadocJar
             pom {
-                groupId = "net.sf.applecommander"
+                groupId = "org.applecommander"
                 artifactId = "ShrinkItArchive"
                 name = 'ShrinkItArchive'
                 description = 'A Java library for managing Apple II ShrinkIt archives.'
