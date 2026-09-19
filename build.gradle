@@ -10,8 +10,8 @@ ext.isSnapshotVersion = version.endsWith("SNAPSHOT")
 ext.isReleaseVersion = !ext.isSnapshotVersion
 
 java {
-    sourceCompatibility = '11'
-    targetCompatibility = '11'
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
 
 repositories {
@@ -22,12 +22,14 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'         
 }
 
-mainClassName = 'com.webcodepro.shrinkit.NufxScan' 
+application {
+    mainClass = 'org.applecommander.shrinkit.NufxScan'
+}
 
 jar {
   manifest {
     attributes(
-      'Main-Class': mainClassName,
+      'Main-Class': application.mainClass,
       'Implementation-Title': 'ShrinkItArchive',
       'Implementation-Version': archiveVersion
     )
@@ -51,8 +53,9 @@ tasks.register('sourcesJar', Jar) {
     from sourceSets.main.allSource
 }
 
-artifacts {
-    archives javadocJar, sourcesJar
+tasks.named("assemble") {
+    dependsOn("javadocJar")
+    dependsOn("sourcesJar")
 }
 
 publishing {
@@ -62,7 +65,7 @@ publishing {
             artifact sourcesJar
             artifact javadocJar
             pom {
-                groupId = "net.sf.applecommander"
+                groupId = "org.applecommander"
                 artifactId = "ShrinkItArchive"
                 name = 'ShrinkItArchive'
                 description = 'A Java library for managing Apple II ShrinkIt archives.'

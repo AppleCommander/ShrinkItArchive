@@ -1,0 +1,70 @@
+/*
+ * ShrinkItArchive
+ * Copyright (C) 2026  Rob Greene
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
+ */
+package org.applecommander.shrinkit;
+
+import org.applecommander.shrinkit.io.LittleEndianByteInputStream;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.io.IOException;
+
+import static org.applecommander.shrinkit.TestHelper.checkDate;
+
+/**
+ * Exercise the Master Header Block.
+ * For right now, we just grab a "real" header
+ * and check it against our computed values.
+ * @author robgreene@users.sourceforge.net
+ */
+public class MasterHeaderBlockTest {
+	@Test
+	public void testWithValidCrc() throws IOException {
+		LittleEndianByteInputStream bs = new LittleEndianByteInputStream(new byte[] {
+				0x4e, (byte)0xf5, 0x46, (byte)0xe9, 0x6c, (byte)0xe5, (byte)0xdc, 0x1b, 
+				0x2d, 0x00, 0x00, 0x00, 0x38, 0x0c, 0x14, 0x5f,
+				0x08, 0x07, 0x30, 0x04, 0x29, 0x0d, 0x14, 0x5f,
+				0x08, 0x07, 0x01, 0x04, 0x01, 0x00, 0x00, 0x00,
+				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, (byte)0xae, (byte)0xac,
+				0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+			});
+		MasterHeaderBlock b = new MasterHeaderBlock(bs);
+		// Using byte values since it should be a bit more clear where they came from
+		Assert.assertEquals(0x1bdc, b.getMasterCrc());
+		Assert.assertEquals(0x2d, b.getTotalRecords());
+		checkDate(new byte[] {0x38, 0x0c, 0x14, 0x5f, 0x08, 0x07, 0x30, 0x04}, b.getArchiveCreateWhen());
+		checkDate(new byte[] {0x29, 0x0d, 0x14, 0x5f, 0x08, 0x07, 0x01, 0x04}, b.getArchiveModWhen());
+		Assert.assertEquals(0x01, b.getMasterVersion());
+		Assert.assertEquals(0x1acae, b.getMasterEof());
+		Assert.assertTrue(b.isValidCrc());
+	}
+
+	@Test
+	public void testWithInvalidCrc() throws IOException {
+		LittleEndianByteInputStream bs = new LittleEndianByteInputStream(new byte[] {
+				0x4e, (byte)0xf5, 0x46, (byte)0xe9, 0x6c, (byte)0xe5, 0x00, 0x00,	// <-- Bad CRC! 
+				0x2d, 0x00, 0x00, 0x00, 0x38, 0x0c, 0x14, 0x5f,
+				0x08, 0x07, 0x30, 0x04, 0x29, 0x0d, 0x14, 0x5f,
+				0x08, 0x07, 0x01, 0x04, 0x01, 0x00, 0x00, 0x00,
+				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, (byte)0xae, (byte)0xac,
+				0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+			});
+		MasterHeaderBlock b = new MasterHeaderBlock(bs);
+		Assert.assertFalse(b.isValidCrc());
+	}
+}

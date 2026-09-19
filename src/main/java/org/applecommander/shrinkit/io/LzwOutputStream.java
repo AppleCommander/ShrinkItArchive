@@ -1,0 +1,116 @@
+/*
+ * ShrinkItArchive
+ * Copyright (C) 2026  Rob Greene
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
+ */
+package org.applecommander.shrinkit.io;
+
+import org.applecommander.shrinkit.CRC16;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * This is the generic Shrinkit LZW compression algorithm.
+ * It does not deal with the vagaries of the LZW/1 and LZW/2 data streams.
+ *  
+ * @author robgreene@users.sourceforge.net
+ */
+public class LzwOutputStream extends OutputStream {
+	private final BitOutputStream os;
+	private final Map<ByteArray,Integer> dictionary = new HashMap<>();
+	private int[] w = new int[0];
+	private int nextCode = 0x101;
+	
+	/**
+	 * This simple class can be used as a key into a Map.
+	 *  
+	 * @author robgreene@users.sourceforge.net
+	 */
+	private static class ByteArray {
+		/** Data being managed. */
+		private final int[] data;
+		/** The computed hash code -- CRC-16 for lack of imagination. */
+		private final int hashCode;
+		
+		public ByteArray(int d) {
+			this(new int[] { d });
+		}
+		public ByteArray(int[] data) {
+			this.data = data;
+			CRC16 crc = new CRC16();
+			for (int b : data) crc.update(b);
+			hashCode = (int)crc.getValue();
+		}
+		public boolean equals(Object obj) {
+			if (!(obj instanceof ByteArray ba)) {
+				return false;
+			}
+            if (data.length != ba.data.length) return false;
+			for (int i=0; i<data.length; i++) {
+				if (data[i] != ba.data[i]) return false;
+			}
+			return true;
+		}
+		public int hashCode() {
+			return hashCode;
+		}
+	}
+	
+	public LzwOutputStream(BitOutputStream os) {
+		this.os = os;
+	}
+
+	@Override
+	public void write(int c) throws IOException {
+		if (dictionary.isEmpty()) {
+			for (int i=0; i<256; i++) dictionary.put(new ByteArray(i), i);
+			dictionary.put(new ByteArray(0x100), null);	// just to mark its spot
+		}
+		c &= 0xff;
+		int[] wc = new int[w.length + 1];
+		if (w.length > 0) System.arraycopy(w, 0, wc, 0, w.length);
+		wc[wc.length-1]= c;
+		if (dictionary.containsKey(new ByteArray(wc))) {
+			w = wc;
+		} else {
+			dictionary.put(new ByteArray(wc), nextCode++);
+			os.write(dictionary.get(new ByteArray(w)));
+			w = new int[] { c };
+		}
+		// Exclusive-OR the current bitmask against the new dictionary size -- if all bits are
+		// on, we'll get 0.  (That is, all 9 bits on is 0x01ff exclusive or bit mask of 0x01ff 
+		// yields 0x0000.)  This tells us we need to increase the number of bits we're writing
+		// to the bit stream.
+		if ((dictionary.size() ^ os.getBitMask()) == 0) {
+			os.increaseRequestedNumberOfBits();
+		}
+	}
+
+	@Override
+	public void flush() throws IOException {
+		os.write(dictionary.get(new ByteArray(w)));
+	}
+	
+	@Override
+	public void close() throws IOException {
+		flush();
+		os.flush();
+		os.close();
+	}
+}
