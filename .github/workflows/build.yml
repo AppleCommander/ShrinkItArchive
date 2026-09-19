@@ -30,7 +30,10 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: build-artifacts
-          path: build/libs/ShrinkItArchive-*.jar
+          path: |
+            build/libs/ShrinkItArchive-*.jar
+            !build/libs/ShrinkItArchive-*-javadoc.jar
+            !build/libs/ShrinkItArchive-*-sources.jar
           archive: false
           if-no-files-found: error
 
