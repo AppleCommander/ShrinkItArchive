@@ -113,14 +113,16 @@ public class ThreadRecord {
 	}
 	/**
 	 * Get the raw data input stream.
+	 * Note that this is private because the input stream should *not* be read past threadEof.
 	 */
-	public InputStream getRawInputStream() {
+	private InputStream getRawInputStream() {
 		return new ByteArrayInputStream(threadData);
 	}
 	/**
 	 * Get the appropriate input data stream for this thread to decompress the contents.
+	 * Note that this is private because the input stream should *not* be read past threadEof.
 	 */
-	public InputStream getInputStream() throws IOException {
+	private InputStream getInputStream() throws IOException {
         return switch (threadFormat) {
             case UNCOMPRESSED -> getRawInputStream();
             case DYNAMIC_LZW1 -> new NufxLzw1InputStream(new LittleEndianByteInputStream(getRawInputStream()));
@@ -128,6 +130,14 @@ public class ThreadRecord {
             default -> throw new IOException("The thread format " + threadFormat
 					+ " does not have an InputStream associated with it!");
         };
+	}
+	/**
+	 * Read all bytes from the record.
+	 */
+	public byte[] readThreadData() throws IOException {
+		try (InputStream is = getInputStream()) {
+			return is.readNBytes((int)threadEof);
+		}
 	}
 	
 	// GENERATED CODE

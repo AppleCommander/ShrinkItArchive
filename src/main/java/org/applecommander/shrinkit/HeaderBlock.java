@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.applecommander.shrinkit.io.LittleEndianByteInputStream;
 
@@ -128,8 +129,8 @@ public class HeaderBlock {
 	 */
 	public String getFilename() {
 		if (filename == null) {
-			ThreadRecord r = findThreadRecord(ThreadKind.FILENAME);
-			if (r != null) filename = r.getText();
+			Optional<ThreadRecord> opt = findThreadRecord(ThreadKind.FILENAME);
+            opt.ifPresent(threadRecord -> filename = threadRecord.getText());
 			if (filename == null) filename = rawFilename;
 			if (filename.contains(":")) {
 				filename = filename.replace(":","/");
@@ -154,29 +155,27 @@ public class HeaderBlock {
 	 * Note that this first searches the data fork and then searches for a disk image; 
 	 * this may not be correct behavior.
 	 */
-	public ThreadRecord getDataForkThreadRecord() {
-		ThreadRecord thread = findThreadRecord(ThreadKind.DATA_FORK);
-		if (thread == null) {
-			thread = findThreadRecord(ThreadKind.DISK_IMAGE);
-		}
-		return thread;
+	public Optional<ThreadRecord> getDataForkThreadRecord() {
+		return findThreadRecord(ThreadKind.DATA_FORK)
+					.or(() -> findThreadRecord(ThreadKind.DISK_IMAGE))
+					.or(Optional::empty);
 	}
 
 	/**
 	 * Get the resource fork.
 	 */
-	public ThreadRecord getResourceForkThreadRecord() {
+	public Optional<ThreadRecord> getResourceForkThreadRecord() {
 		return findThreadRecord(ThreadKind.RESOURCE_FORK);
 	}
 
 	/**
 	 * Locate a ThreadRecord by its ThreadKind.
 	 */
-	protected ThreadRecord findThreadRecord(ThreadKind tk) {
+	public Optional<ThreadRecord> findThreadRecord(ThreadKind tk) {
 		for (ThreadRecord r : threads) {
-			if (r.getThreadKind() == tk) return r;
+			if (r.getThreadKind() == tk) return Optional.of(r);
 		}
-		return null;
+		return Optional.empty();
 	}
 	
 	// HELPER METHODS

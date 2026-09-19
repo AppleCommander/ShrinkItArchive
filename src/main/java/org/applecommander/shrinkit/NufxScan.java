@@ -170,7 +170,7 @@ public class NufxScan {
 				entryNumber++;
 				for (ThreadRecord r : b.getThreadRecords()) {
 					try {
-						r.getInputStream().readNBytes((int)b.getUncompressedSize());
+						var _ = r.readThreadData();
 					} catch (Throwable t) {
 						System.out.printf("Error reading entry %d (%s/%s/%s) in '%s': %s\n",
 								entryNumber, r.getThreadClass(), r.getThreadFormat(), r.getThreadKind(),

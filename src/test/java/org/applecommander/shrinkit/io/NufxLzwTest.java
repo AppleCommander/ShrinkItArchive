@@ -22,6 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Test;
 
@@ -78,24 +79,18 @@ public class NufxLzwTest extends TestBase {
 		byte[] actual = null;
 		for (HeaderBlock header : headers) {
 			if (archiveFile.equals(header.getFilename())) {
-				ThreadRecord r = header.getDataForkThreadRecord();
-				long bytes = r.getThreadEof();
-				ByteArrayOutputStream buf = new ByteArrayOutputStream();
-				InputStream is = r.getInputStream();
-				while ( bytes-- > 0 ) {
-					buf.write(is.read());
+				Optional<ThreadRecord> opt = header.getDataForkThreadRecord();
+				if (opt.isPresent()) {
+					ThreadRecord r = opt.get();
+					actual = r.readThreadData();
 				}
-				actual = buf.toByteArray();
-				is.close();
 				break;
 			}
 		}
-		InputStream is = getClass().getResourceAsStream(expectedContentFile);
-		assert is != null;
 		ByteArrayOutputStream buf = new ByteArrayOutputStream();
-		int b;
-		while ( (b = is.read()) != -1 ) {
-			buf.write(b);
+		try (InputStream is = getClass().getResourceAsStream(expectedContentFile)) {
+			assert is != null;
+			is.transferTo(buf);
 		}
 		byte[] expected = buf.toByteArray();
 		assert actual != null;
