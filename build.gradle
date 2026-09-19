@@ -10,8 +10,8 @@ ext.isSnapshotVersion = version.endsWith("SNAPSHOT")
 ext.isReleaseVersion = !ext.isSnapshotVersion
 
 java {
-    sourceCompatibility = '11'
-    targetCompatibility = '11'
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 repositories {
@@ -22,12 +22,14 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'         
 }
 
-mainClassName = 'com.webcodepro.shrinkit.NufxScan' 
+application {
+    mainClass = 'com.webcodepro.shrinkit.NufxScan'
+}
 
 jar {
   manifest {
     attributes(
-      'Main-Class': mainClassName,
+      'Main-Class': application.mainClass,
       'Implementation-Title': 'ShrinkItArchive',
       'Implementation-Version': archiveVersion
     )
