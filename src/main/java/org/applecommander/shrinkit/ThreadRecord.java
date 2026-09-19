@@ -86,7 +86,7 @@ public class ThreadRecord {
 	 * Return the text data.
 	 */
 	public String getText() {
-		return isText() ? new String(threadData, 0, (int)threadEof) : null;
+		return isText() ? Utility.makeString(threadData, (int)threadEof) : null;
 	}
 	/**
 	 * Get raw data bytes (compressed).

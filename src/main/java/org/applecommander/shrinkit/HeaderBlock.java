@@ -81,7 +81,8 @@ public class HeaderBlock {
 		// Read the (defunct) filename
 		int length = bs.readWord();
 		if (length > 0) {
-			rawFilename = new String(bs.readBytes(length));
+			byte[] data = bs.readBytes(length);
+			rawFilename = Utility.makeString(data, length);
 		}
 		if (rawFilename == null) {
 			rawFilename = "Unknown";
@@ -101,7 +102,7 @@ public class HeaderBlock {
 
 	/**
 	 * Locate the filename and return it.  It may have been given in the old
-	 * location, in which case, it is in the String filename.  Otherwise it will
+	 * location, in which case, it is in the String filename. Otherwise, it will
 	 * be in the filename thread.  If it is in the thread, we shove it in the 
 	 * filename variable just so we don't need to search for it later.  This 
 	 * should not be a problem, because if we write the file, we'll write the
