@@ -61,12 +61,14 @@ tasks.named("assemble") {
 publishing {
     publications {
         mavenJava(MavenPublication) {
+            groupId = "org.applecommander"
+            artifactId = "ShrinkItArchive"
+
             from components.java
+
             artifact sourcesJar
             artifact javadocJar
             pom {
-                groupId = "org.applecommander"
-                artifactId = "ShrinkItArchive"
                 name = 'ShrinkItArchive'
                 description = 'A Java library for managing Apple II ShrinkIt archives.'
                 url = 'https://applecommander.github.io/'
@@ -86,13 +88,13 @@ publishing {
                 scm {
                     connection = 'scm:git:https://github.com/AppleCommander/ShrinkItArchive.git'
                     developerConnection = 'scm:git:git@github.com:AppleCommander/ShrinkItArchive.git'
-                    url = 'https://github.com/AppleCommander/applesingle'
+                    url = 'https://github.com/AppleCommander/ShrinkItArchive'
                 }
             }
             repositories {
                 maven {
-                    def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
-                    def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+                    def releasesRepoUrl = "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2"
+                    def snapshotsRepoUrl = "https://ossrh-staging-api.central.sonatype.com/content/repositories/snapshots/"
                     url = isSnapshotVersion ? snapshotsRepoUrl : releasesRepoUrl
                     credentials {
                         username = findProperty('ossrhUsername')
