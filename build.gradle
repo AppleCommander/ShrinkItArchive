@@ -22,6 +22,10 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'         
 }
 
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += ['--module-path', classpath.asPath]
+}
+
 application {
     mainClass = 'org.applecommander.shrinkit.NufxScan'
 }
