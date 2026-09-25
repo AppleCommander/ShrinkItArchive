@@ -22,6 +22,10 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'         
 }
 
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += ['--module-path', classpath.asPath]
+}
+
 application {
     mainClass = 'org.applecommander.shrinkit.NufxScan'
 }
@@ -107,6 +111,10 @@ publishing {
 }
 
 signing {
+    def signingKeyId = findProperty("signingKeyId")
+    def signingKey = findProperty("signingKey")
+    def signingPassword = findProperty("signingPassword")
+    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
     sign publishing.publications.mavenJava
 }
 
