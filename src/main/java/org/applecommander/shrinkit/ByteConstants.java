@@ -16,8 +16,11 @@
  * along with this program; if not, see
  * <https://www.gnu.org/licenses/>.
  */
-package org.applecommander.shrinkit.io;
+package org.applecommander.shrinkit;
 
+
+import org.applecommander.shrinkit.io.LittleEndianByteInputStream;
+import org.applecommander.shrinkit.io.LittleEndianByteOutputStream;
 
 /**
  * Provides constants for the LittleEndianByteInputStream and ByteTarget classes.
