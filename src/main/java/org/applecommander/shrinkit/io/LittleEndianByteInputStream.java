@@ -18,6 +18,7 @@
  */
 package org.applecommander.shrinkit.io;
 
+import org.applecommander.shrinkit.ByteConstants;
 import org.applecommander.shrinkit.CRC16;
 import org.applecommander.shrinkit.NuFileArchive;
 

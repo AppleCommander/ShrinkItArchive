@@ -18,7 +18,6 @@
  */
 package org.applecommander.shrinkit;
 
-import org.applecommander.shrinkit.io.ByteConstants;
 import org.applecommander.shrinkit.io.LittleEndianByteInputStream;
 
 import java.io.IOException;
