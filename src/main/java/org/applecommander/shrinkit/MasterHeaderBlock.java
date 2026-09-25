@@ -48,7 +48,7 @@ public class MasterHeaderBlock {
 	/**
 	 * Create the Master Header Block, based on the LittleEndianByteInputStream.
 	 */
-	public MasterHeaderBlock(LittleEndianByteInputStream bs) throws IOException {
+	MasterHeaderBlock(LittleEndianByteInputStream bs) throws IOException {
 		int fileType = 0, headerOffset = 0;
 		fileType = bs.seekFileType();
 		

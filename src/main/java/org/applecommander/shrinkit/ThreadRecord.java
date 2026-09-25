@@ -52,14 +52,14 @@ public class ThreadRecord {
 	 * Construct the ThreadRecord and read the header details with no hints
 	 * from the Header Block.
 	 */
-	public ThreadRecord(LittleEndianByteInputStream bs) throws IOException {
+	ThreadRecord(LittleEndianByteInputStream bs) throws IOException {
 		this(null, bs);
 	}
 
 	/**
 	 * Construct the ThreadRecord and read the header details.
 	 */
-	public ThreadRecord(HeaderBlock hb, LittleEndianByteInputStream bs) throws IOException {
+	ThreadRecord(HeaderBlock hb, LittleEndianByteInputStream bs) throws IOException {
 		threadClass = ThreadClass.find(bs.readWord());
 		threadFormat = ThreadFormat.find(bs.readWord());
 		threadKind = ThreadKind.find(bs.readWord(), threadClass);
@@ -90,7 +90,7 @@ public class ThreadRecord {
 	/**
 	 * Read the raw thread data.  This must be called.
 	 */
-	public void readThreadData(LittleEndianByteInputStream bs) throws IOException {
+	void readThreadData(LittleEndianByteInputStream bs) throws IOException {
 		threadData = bs.readBytes((int)compThreadEof);
 	}
 	/**

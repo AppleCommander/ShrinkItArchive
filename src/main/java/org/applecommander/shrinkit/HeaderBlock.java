@@ -63,7 +63,7 @@ public class HeaderBlock {
 	 * Create the Header Block.  This is done dynamically since
 	 * the Header Block size varies significantly.
 	 */
-	public HeaderBlock(LittleEndianByteInputStream bs) throws IOException {
+	HeaderBlock(LittleEndianByteInputStream bs) throws IOException {
 		int type = bs.seekFileType(4);
 		if (type == 0) {
 			throw new IOException("Unable to decode this archive.");
@@ -111,7 +111,7 @@ public class HeaderBlock {
 	 * Read in all data threads.  All ThreadRecords are read and then
 	 * each thread's data is read (per NuFX spec).
 	 */
-	public void readThreads(LittleEndianByteInputStream bs) throws IOException {
+	void readThreads(LittleEndianByteInputStream bs) throws IOException {
 		for (long l=0; l<totalThreads; l++) threads.add(new ThreadRecord(this, bs));
 		for (ThreadRecord r : threads) {
 			r.readThreadData(bs);
